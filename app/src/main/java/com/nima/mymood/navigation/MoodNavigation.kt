@@ -8,6 +8,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.nima.mymood.screens.HomeScreen
+import com.nima.mymood.screens.MenuScreen
 import com.nima.mymood.screens.TodayMoodScreen
 
 @Composable
@@ -29,6 +30,10 @@ fun MoodNavigation() {
                 viewModel = hiltViewModel(),
                 id = it.arguments?.getString("id"),
             )
+        }
+
+        composable(Screens.MenuScreen.name){
+            MenuScreen(navController = navController)
         }
     }
 }

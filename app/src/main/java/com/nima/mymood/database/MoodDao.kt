@@ -23,8 +23,8 @@ interface MoodDao {
     @Query("select * from effect where foreignKey = :fk")
     fun getEffectsByFK(fk: UUID): Flow<List<Effect>>
 
-    @Query("select * from effect where rate = :rate")
-    fun getEffectByRate(rate: Int): Flow<List<Effect>>
+    @Query("select * from effect where rate in (:rate)")
+    fun getEffectByRate(rate: List<Int>): Flow<List<Effect>>
 
     @Query("select * from day where year = :year and month = :month and day = :day")
     suspend fun getDayByDate(year: Int, month: Int, day: Int): Day

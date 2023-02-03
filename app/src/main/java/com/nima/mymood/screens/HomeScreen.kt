@@ -73,6 +73,7 @@ fun HomeScreen(
             actions = {
                 IconButton(onClick = {
                     // go to moods menu
+                    navController.navigate(Screens.MenuScreen.name)
                 }) {
                     Icon(imageVector = Icons.Default.ArrowForward, contentDescription = null)
                 }
@@ -141,19 +142,29 @@ fun HomeScreen(
                     }
                 }
 
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
-                    verticalArrangement = Arrangement.Top,
-                    horizontalAlignment = Alignment.Start,
-                ){
-                    items(items = effects.value){
-                        EffectsListItem(
-                            it.rate,
-                            it.description
-                        )
+                if (effects.value.isNotEmpty()){
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
+                        verticalArrangement = Arrangement.Top,
+                        horizontalAlignment = Alignment.Start,
+                    ) {
+                        items(items = effects.value) {
+                            EffectsListItem(
+                                it.rate,
+                                it.description
+                            )
+                        }
                     }
+                }
+
+                else{
+                    Text(text = "Nothing Here Yet!",
+                        style = MaterialTheme.typography.bodyLarge,
+                        fontWeight = FontWeight.Light,
+                        color = Color.LightGray
+                    )
                 }
             }
         }

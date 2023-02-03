@@ -62,20 +62,6 @@ fun TodayMoodScreen(
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 10.dp, vertical = 8.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Start,
-            ) {
-                Icon(imageVector = Icons.Outlined.Info, contentDescription = null)
-                Text(text = "You Can Always Ass Effects For Today!",
-                    style = MaterialTheme.typography.labelMedium,
-                    fontWeight = FontWeight.Light,
-                    modifier = Modifier.padding(start = 8.dp)
-                )
-            }
 
             Text(text = "${Calculate.calculateMonthName(day.value!!.month)} " +
                     "${day.value!!.day} ${day.value!!.year}",

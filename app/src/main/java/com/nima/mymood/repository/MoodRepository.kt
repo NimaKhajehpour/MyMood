@@ -21,7 +21,7 @@ class MoodRepository @Inject constructor(private val dao: MoodDao) {
     fun getEffectsByFK(fk: UUID): Flow<List<Effect>> =
         dao.getEffectsByFK(fk).flowOn(Dispatchers.IO).conflate()
 
-    fun getEffectByRate(rate: Int): Flow<List<Effect>> =
+    fun getEffectByRate(rate: List<Int>): Flow<List<Effect>> =
         dao.getEffectByRate(rate).flowOn(Dispatchers.IO).conflate()
 
     suspend fun getDayByDate(year: Int, month: Int, day: Int): Day =
