@@ -71,7 +71,7 @@ fun HomeScreen(
                 )
             },
             actions = {
-                ElevatedButton(onClick = {
+                FilledIconButton(onClick = {
                     // go to moods menu
                     navController.navigate(Screens.MenuScreen.name)
                 },
