@@ -23,7 +23,7 @@ interface MoodDao {
     @Query("select * from effect where foreignKey = :fk")
     fun getEffectsByFK(fk: UUID): Flow<List<Effect>>
 
-    @Query("select * from effect where rate in (:rate)")
+    @Query("select * from effect where rate in (:rate) order by rate asc")
     fun getEffectByRate(rate: List<Int>): Flow<List<Effect>>
 
     @Query("select * from day where year = :year and month = :month and day = :day")
@@ -32,11 +32,8 @@ interface MoodDao {
     @Query("select * from day where id = :id")
     fun getDayById(id: UUID): Flow<Day>
 
-    @Query("select * from day where year = :year")
-    fun getDayByYear(year: Int): Flow<List<Day>>
-
-    @Query("select * from day where year = :year and month = :month")
-    fun getDayByMonth(year: Int, month: Int): Flow<List<Day>>
+    @Query("select * from day order by year desc, month desc, day desc")
+    fun getAllDays(): Flow<List<Day>>
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
     suspend fun updateDay(day: Day)

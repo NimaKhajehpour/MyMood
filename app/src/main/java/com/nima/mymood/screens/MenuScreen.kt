@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.nima.mymood.components.MenuItems
 import com.nima.mymood.R
+import com.nima.mymood.navigation.Screens
 import com.nima.mymood.ui.theme.neutral
 import com.nima.mymood.ui.theme.very_dissatisfied
 import com.nima.mymood.ui.theme.very_satisfied
@@ -44,7 +45,7 @@ fun MenuScreen(
             modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.Center,
             horizontalArrangement = Arrangement.Center,
-//            contentPadding = PaddingValues(16.dp)
+            contentPadding = PaddingValues(16.dp)
         ){
             item {
                 MenuItems(icon = null,
@@ -53,6 +54,7 @@ fun MenuScreen(
                     tint = very_satisfied
                 ) {
                     // go to happy effect
+                    navController.navigate(Screens.HappyEffects.name)
                 }
             }
             item {
@@ -62,6 +64,8 @@ fun MenuScreen(
                     tint = neutral
                 ) {
                     // go to neutral effect
+                    navController.navigate(Screens.NeutralEffects.name)
+
                 }
             }
             item {
@@ -71,6 +75,8 @@ fun MenuScreen(
                     tint = very_dissatisfied
                 ) {
                     // go to sad effect
+                    navController.navigate(Screens.SadEffects.name)
+
                 }
             }
             item {
@@ -80,6 +86,7 @@ fun MenuScreen(
                     tint = Color.Black
                 ) {
                     // go search
+                    navController.navigate(Screens.SavedDays.name)
                 }
             }
         }

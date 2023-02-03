@@ -26,7 +26,7 @@ fun MenuItems (
 ){
     ElevatedCard(
         modifier = Modifier.fillMaxWidth()
-            .padding(16.dp),
+            .padding(4.dp),
         shape = RoundedCornerShape(5.dp),
         onClick = {
             onClick()

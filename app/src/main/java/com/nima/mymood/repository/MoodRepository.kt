@@ -30,11 +30,8 @@ class MoodRepository @Inject constructor(private val dao: MoodDao) {
     fun getDayById(id: UUID): Flow<Day> =
         dao.getDayById(id)
 
-    fun getDayByYear(year: Int): Flow<List<Day>> =
-        dao.getDayByYear(year).flowOn(Dispatchers.IO).conflate()
-
-    fun getDayByMonth(year: Int, month: Int): Flow<List<Day>> =
-        dao.getDayByMonth(year, month).flowOn(Dispatchers.IO).conflate()
+    fun getAllDays(): Flow<List<Day>> =
+        dao.getAllDays()
 
     suspend fun updateDay(day: Day) =
         dao.updateDay(day)

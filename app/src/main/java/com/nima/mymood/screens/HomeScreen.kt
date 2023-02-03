@@ -71,10 +71,12 @@ fun HomeScreen(
                 )
             },
             actions = {
-                IconButton(onClick = {
+                ElevatedButton(onClick = {
                     // go to moods menu
                     navController.navigate(Screens.MenuScreen.name)
-                }) {
+                },
+                    modifier = Modifier.padding(end = 12.dp)
+                ) {
                     Icon(imageVector = Icons.Default.ArrowForward, contentDescription = null)
                 }
             }
