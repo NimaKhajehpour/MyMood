@@ -52,7 +52,7 @@ fun HappyEffectsScreen (
     }else{
         LazyColumn(
             modifier = Modifier.fillMaxWidth(),
-            contentPadding = PaddingValues(horizontal = 32.dp, vertical = 16.dp),
+            contentPadding = PaddingValues(start = 32.dp, end = 32.dp, top = 16.dp),
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ){

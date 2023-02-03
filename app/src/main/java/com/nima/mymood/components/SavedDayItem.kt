@@ -33,8 +33,7 @@ fun SavedDayItem(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Start
         ) {
-            Text(text = "${Calculate.calculateDayName(day)} " +
-                    "${Calculate.calculateMonthName(month)} " +
+            Text(text = "${Calculate.calculateMonthName(month)} " +
                     "$day $year",
                 modifier = Modifier.padding(start = 5.dp)
             )

@@ -25,7 +25,7 @@ fun SaveDaysScreen (
     if (days.value.isNotEmpty()){
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(8.dp),
+            contentPadding = PaddingValues(vertical = 8.dp, horizontal = 16.dp),
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ){

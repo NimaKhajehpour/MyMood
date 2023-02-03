@@ -4,7 +4,9 @@ import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.outlined.Edit
@@ -58,7 +60,8 @@ fun HomeScreen(
 
     Column(
         modifier = Modifier
-            .fillMaxSize(),
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ){
@@ -145,20 +148,21 @@ fun HomeScreen(
                 }
 
                 if (effects.value.isNotEmpty()){
-                    LazyColumn(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
+
+                    Column(
+                        modifier = Modifier.fillMaxWidth()
+                            .padding(horizontal = 16.dp),
                         verticalArrangement = Arrangement.Top,
-                        horizontalAlignment = Alignment.Start,
-                    ) {
-                        items(items = effects.value) {
+                        horizontalAlignment = Alignment.Start
+                    ){
+                        effects.value.forEach {
                             EffectsListItem(
                                 it.rate,
                                 it.description
                             )
                         }
                     }
+
                 }
 
                 else{

@@ -31,15 +31,14 @@ fun DayScreen (
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(text = "${Calculate.calculateDayName(day.value!!.day)} " +
-                    "${Calculate.calculateMonthName(day.value!!.month)} " +
+            Text(text = "${Calculate.calculateMonthName(day.value!!.month)} " +
                     "${day.value!!.day} ${day.value!!.year}",
                 modifier = Modifier.padding(vertical = 16.dp)
             )
 
             LazyColumn(
                 modifier = Modifier.fillMaxWidth(),
-                contentPadding = PaddingValues(8.dp),
+                contentPadding = PaddingValues(vertical = 8.dp, horizontal = 32.dp),
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.CenterHorizontally
             ){
