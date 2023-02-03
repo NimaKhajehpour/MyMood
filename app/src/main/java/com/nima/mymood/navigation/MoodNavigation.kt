@@ -22,12 +22,12 @@ fun MoodNavigation() {
 
         composable(Screens.TodayMoodScreen.name+"/{id}",
             arguments = listOf(
-                navArgument(name = "id"){type = NavType.StringType}
+                navArgument(name = "id"){type = NavType.StringType},
             )
         ){
             TodayMoodScreen(navController = navController,
                 viewModel = hiltViewModel(),
-                id = it.arguments?.getString("id")
+                id = it.arguments?.getString("id"),
             )
         }
     }

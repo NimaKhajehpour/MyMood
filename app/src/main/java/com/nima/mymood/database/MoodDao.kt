@@ -30,7 +30,7 @@ interface MoodDao {
     suspend fun getDayByDate(year: Int, month: Int, day: Int): Day
 
     @Query("select * from day where id = :id")
-    suspend fun getDayById(id: UUID): Day
+    fun getDayById(id: UUID): Flow<Day>
 
     @Query("select * from day where year = :year")
     fun getDayByYear(year: Int): Flow<List<Day>>

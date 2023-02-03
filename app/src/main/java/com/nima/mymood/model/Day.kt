@@ -15,6 +15,4 @@ data class Day(
     var month: Int,
     @ColumnInfo
     var year: Int,
-    @ColumnInfo
-    var overallMood: Int
 )

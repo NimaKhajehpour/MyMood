@@ -1,12 +1,13 @@
 package com.nima.mymood.screens
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -17,8 +18,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.nima.mymood.R
+import com.nima.mymood.components.EffectsListItem
 import com.nima.mymood.model.Day
 import com.nima.mymood.navigation.Screens
+import com.nima.mymood.ui.theme.*
 import com.nima.mymood.utils.Calculate
 import com.nima.mymood.viewmodels.HomeViewModel
 import kotlinx.coroutines.launch
@@ -26,7 +29,7 @@ import kotlinx.coroutines.runBlocking
 import java.util.*
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     navController: NavController,
@@ -55,8 +58,7 @@ fun HomeScreen(
 
     Column(
         modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState()),
+            .fillMaxSize(),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ){
@@ -101,25 +103,58 @@ fun HomeScreen(
                     )
                     ElevatedButton(onClick = {
                         // today mood screen
-                        val day = Day(
+                        val tempDay = Day(
                             day = day,
                             month = month,
                             year = year,
-                            overallMood = 2
                         )
                         runBlocking {
                             launch {
-                                viewModel.addDay(day)
+                                viewModel.addDay(tempDay)
                             }
                         }
-                        navController.navigate(Screens.TodayMoodScreen.name+"/${day.id.toString()}")
+                        navController.navigate(
+                            Screens.TodayMoodScreen.name+"/${tempDay.id.toString()}")
                     }) {
                         Text(text = "How Is Your Mood?")
                     }
                 }
             }
             else -> {
-                Text(text = "yes")
+
+                val effects = viewModel.getDayEffect(today.id).collectAsState(initial = emptyList())
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 16.dp, start = 16.dp, end = 16.dp, bottom = 32.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    ElevatedButton(onClick = {
+                        // go to edit
+                        navController.navigate(Screens.TodayMoodScreen.name+"/${today.id.toString()}")
+                    },
+                        shape = RoundedCornerShape(5.dp),
+                    ) {
+                        Icon(imageVector = Icons.Outlined.Edit, contentDescription = null)
+                    }
+                }
+
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
+                    verticalArrangement = Arrangement.Top,
+                    horizontalAlignment = Alignment.Start,
+                ){
+                    items(items = effects.value){
+                        EffectsListItem(
+                            it.rate,
+                            it.description
+                        )
+                    }
+                }
             }
         }
     }
