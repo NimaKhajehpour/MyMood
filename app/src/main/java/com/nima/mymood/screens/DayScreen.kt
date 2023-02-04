@@ -37,7 +37,7 @@ fun DayScreen (
             )
 
             LazyColumn(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(vertical = 8.dp, horizontal = 32.dp),
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.CenterHorizontally

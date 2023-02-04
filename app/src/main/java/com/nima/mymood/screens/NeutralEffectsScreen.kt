@@ -30,7 +30,7 @@ fun NeutralEffectsScreen(
     if (neutralEffects.value.isEmpty()){
         Column(
             modifier = Modifier
-                .fillMaxWidth()
+                .fillMaxSize()
                 .padding(top = 64.dp),
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
@@ -51,7 +51,7 @@ fun NeutralEffectsScreen(
         }
     }else{
         LazyColumn(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(start = 32.dp, end = 32.dp, top = 16.dp),
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally

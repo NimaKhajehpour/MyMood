@@ -3,10 +3,7 @@ package com.nima.mymood.components
 import android.graphics.drawable.Icon
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.ElevatedCard
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,7 +27,8 @@ fun MenuItems (
         shape = RoundedCornerShape(5.dp),
         onClick = {
             onClick()
-        }
+        },
+        elevation = CardDefaults.elevatedCardElevation(15.dp)
     ) {
         Column(
             modifier = Modifier

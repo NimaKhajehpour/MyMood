@@ -121,7 +121,9 @@ fun HomeScreen(
                         }
                         navController.navigate(
                             Screens.TodayMoodScreen.name+"/${tempDay.id.toString()}")
-                    }) {
+                    },
+                        elevation = ButtonDefaults.elevatedButtonElevation(15.dp)
+                    ) {
                         Text(text = "How Is Your Mood?")
                     }
                 }
@@ -142,6 +144,7 @@ fun HomeScreen(
                         navController.navigate(Screens.TodayMoodScreen.name+"/${today.id.toString()}")
                     },
                         shape = RoundedCornerShape(5.dp),
+                        elevation = ButtonDefaults.elevatedButtonElevation(15.dp)
                     ) {
                         Icon(imageVector = Icons.Outlined.Edit, contentDescription = null)
                     }
@@ -150,7 +153,8 @@ fun HomeScreen(
                 if (effects.value.isNotEmpty()){
 
                     Column(
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier
+                            .fillMaxWidth()
                             .padding(horizontal = 16.dp),
                         verticalArrangement = Arrangement.Top,
                         horizontalAlignment = Alignment.Start

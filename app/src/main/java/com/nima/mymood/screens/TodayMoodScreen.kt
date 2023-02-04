@@ -73,7 +73,8 @@ fun TodayMoodScreen(
                 shape = RoundedCornerShape(5.dp),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 12.dp)
+                    .padding(horizontal = 16.dp, vertical = 12.dp),
+                elevation = CardDefaults.elevatedCardElevation(10.dp)
             ){
                 Column(
                     modifier = Modifier
