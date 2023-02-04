@@ -1,0 +1,1 @@
+Simple and minimalistic app to track your daily mood with.

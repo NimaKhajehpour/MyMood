@@ -5,6 +5,31 @@ plugins {
     id 'kotlin-kapt'
 }
 
+import com.android.tools.profgen.ArtProfileKt
+import com.android.tools.profgen.ArtProfileSerializer
+import com.android.tools.profgen.DexFile
+
+project.afterEvaluate {
+    tasks.compileReleaseArtProfile.doLast {
+        outputs.files.each { file ->
+            if (file.toString().endsWith(".profm")) {
+                println("Sorting ${file} ...")
+                def version = ArtProfileSerializer.valueOf("METADATA_0_0_2")
+                def profile = ArtProfileKt.ArtProfile(file)
+                def keys = new ArrayList(profile.profileData.keySet())
+                def sortedData = new LinkedHashMap()
+                Collections.sort keys, new DexFile.Companion()
+                keys.each { key -> sortedData[key] = profile.profileData[key] }
+                new FileOutputStream(file).with {
+                    write(version.magicBytes$profgen)
+                    write(version.versionBytes$profgen)
+                    version.write$profgen(it, sortedData, "")
+                }
+            }
+        }
+    }
+}
+
 android {
     namespace 'com.nima.mymood'
     compileSdk 33
@@ -24,16 +49,17 @@ android {
 
     buildTypes {
         release {
+            debuggable false
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
     }
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = '11'
     }
     buildFeatures {
         compose true
@@ -53,7 +79,6 @@ dependencies {
     //Coroutines
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.2"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.5.2"
 
     //ViewModel
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1"
