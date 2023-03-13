@@ -1,0 +1,3 @@
+In this update:
+- users can export their app data as xml, the file will be saved as MyMoodExported.xml under downloads directory.
+- the exported data can be imported to another instance of the app. (it will delete all the saved data on database for data to be able to get imported)
