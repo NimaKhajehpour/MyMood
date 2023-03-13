@@ -14,10 +14,10 @@ import java.util.*
 @Dao
 interface MoodDao {
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun addDay(day: Day)
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun addEffect(effect: Effect)
 
     @Query("select * from effect where foreignKey = :fk")
@@ -35,6 +35,9 @@ interface MoodDao {
     @Query("select * from day order by year desc, month desc, day desc")
     fun getAllDays(): Flow<List<Day>>
 
+    @Query("select * from effect")
+    fun getAllEffects(): Flow<List<Effect>>
+
     @Update(onConflict = OnConflictStrategy.REPLACE)
     suspend fun updateDay(day: Day)
 
@@ -43,4 +46,10 @@ interface MoodDao {
 
     @Query("delete from effect where foreignKey = :fk")
     suspend fun deleteDayEffects(fk: UUID)
+
+    @Query("delete from effect")
+    suspend fun deleteAllEffects()
+
+    @Query("delete from day")
+    suspend fun deleteAllDays()
 }

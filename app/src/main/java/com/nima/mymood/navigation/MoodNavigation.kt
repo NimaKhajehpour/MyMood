@@ -32,7 +32,7 @@ fun MoodNavigation() {
         }
 
         composable(Screens.MenuScreen.name){
-            MenuScreen(navController = navController)
+            MenuScreen(navController = navController, viewModel = hiltViewModel())
         }
 
         composable(Screens.HappyEffects.name){

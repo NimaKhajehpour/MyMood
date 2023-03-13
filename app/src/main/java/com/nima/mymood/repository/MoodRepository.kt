@@ -33,6 +33,9 @@ class MoodRepository @Inject constructor(private val dao: MoodDao) {
     fun getAllDays(): Flow<List<Day>> =
         dao.getAllDays()
 
+    fun getAllEffects(): Flow<List<Effect>> =
+        dao.getAllEffects()
+
     suspend fun updateDay(day: Day) =
         dao.updateDay(day)
 
@@ -41,4 +44,10 @@ class MoodRepository @Inject constructor(private val dao: MoodDao) {
 
     suspend fun deleteDayEffects(fk: UUID) =
         dao.deleteDayEffects(fk)
+
+    suspend fun deleteAllEffects() =
+        dao.deleteAllEffects()
+
+    suspend fun deleteAllDays() =
+        dao.deleteAllDays()
 }
