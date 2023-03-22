@@ -10,6 +10,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.sharp.Info
@@ -51,6 +52,14 @@ fun TodayMoodScreen(
         mutableStateOf(2)
     }
 
+    var deleteEffect by remember {
+        mutableStateOf(false)
+    }
+
+    var effectToDelete: Effect? by remember {
+        mutableStateOf(null)
+    }
+
     val effectsList = viewModel.getDayEffects(UUID.fromString(id!!)).collectAsState(initial = emptyList())
 
     if (day.value != null){
@@ -62,6 +71,42 @@ fun TodayMoodScreen(
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+
+            if (deleteEffect){
+                AlertDialog(
+                    onDismissRequest = {
+                        deleteEffect = false
+                        effectToDelete = null
+                    },
+                    dismissButton = {
+                        TextButton(onClick = {
+                            deleteEffect = false
+                            effectToDelete = null
+                        }) {
+                            Text(text = "Cancel")
+                        }
+                    },
+                    confirmButton = {
+                        TextButton(onClick = {
+                            deleteEffect = false
+                            viewModel.deleteEffect(effectToDelete!!)
+                            effectToDelete = null
+                        }) {
+                            Text(text = "Confirm")
+                        }
+                    },
+                    icon = {
+                        Icon(imageVector = Icons.Default.Delete, contentDescription = null)
+                    },
+                    text = {
+                        Text(text = "You are about to delete an effect from your day! Remember that effects will not be deleted from your life." +
+                                "\nDo you want to permanently delete this effect?")
+                    },
+                    title = {
+                        Text(text = "Delete Effect?")
+                    }
+                )
+            }
 
             Text(text = "${Calculate.calculateMonthName(day.value!!.month)} " +
                     "${day.value!!.day} ${day.value!!.year}",
@@ -250,7 +295,10 @@ fun TodayMoodScreen(
                     EffectsListItem(
                         effectRate = it.rate,
                         effectDescription = it.description
-                    )
+                    ){
+                        effectToDelete = it
+                        deleteEffect = true
+                    }
                 }
             }
 

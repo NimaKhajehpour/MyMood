@@ -1,15 +1,21 @@
 package com.nima.mymood.components
 
+import android.util.Log
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.gestures.detectVerticalDragGestures
+import androidx.compose.foundation.gestures.draggable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -19,15 +25,25 @@ import com.nima.mymood.ui.theme.*
 @Composable
 fun EffectsListItem(
     effectRate: Int = 0,
-    effectDescription: String = ""
+    effectDescription: String = "",
+    effectDate: String? = null,
+    onLongPress: () -> Unit
 ) {
     ElevatedCard(
         shape = RoundedCornerShape(5.dp),
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 5.dp),
+            .padding(vertical = 5.dp)
+            .pointerInput(Unit) {
+                detectTapGestures(
+                    onLongPress = {
+                        onLongPress()
+                    }
+                )
+            },
         elevation = CardDefaults.elevatedCardElevation(15.dp)
     ) {
+
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -61,6 +77,32 @@ fun EffectsListItem(
                 modifier = Modifier.padding(start = 16.dp)
 
             )
+        }
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 8.dp, bottom = 8.dp, top = 5.dp, end = 8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Start
+        ){
+            Text(
+                text = "Long press to delete.",
+                color = Color.Gray,
+                style = MaterialTheme.typography.labelSmall,
+                fontWeight = FontWeight.Light,
+            )
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            if (!effectDate.isNullOrBlank()) {
+                Text(
+                    text = effectDate,
+                    style = MaterialTheme.typography.labelSmall,
+                    color = Color.Gray,
+                    fontWeight = FontWeight.Light
+                )
+            }
         }
     }
 }

@@ -44,6 +44,9 @@ interface MoodDao {
     @Delete
     suspend fun deleteDay(day: Day)
 
+    @Delete
+    suspend fun deleteEffect(effect: Effect)
+
     @Query("delete from effect where foreignKey = :fk")
     suspend fun deleteDayEffects(fk: UUID)
 

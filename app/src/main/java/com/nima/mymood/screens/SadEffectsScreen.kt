@@ -3,11 +3,10 @@ package com.nima.mymood.screens
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -17,7 +16,15 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.nima.mymood.R
 import com.nima.mymood.components.EffectsListItem
+import com.nima.mymood.model.Effect
 import com.nima.mymood.viewmodels.SadEffectsViewModel
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 
 @Composable
 fun SadEffectsScreen(
@@ -26,6 +33,16 @@ fun SadEffectsScreen(
 ) {
 
     val sadEffects = viewModel.getSadMood().collectAsState(initial = emptyList())
+
+    var deleteEffect by remember {
+        mutableStateOf(false)
+    }
+
+    var effectToDelete: Effect? by remember {
+        mutableStateOf(null)
+    }
+
+    val scope = rememberCoroutineScope()
 
     if (sadEffects.value.isEmpty()){
         Column(
@@ -50,17 +67,81 @@ fun SadEffectsScreen(
             )
         }
     }else{
-        LazyColumn(
+        Column(
             modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(start = 32.dp, end = 32.dp, top = 16.dp),
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ){
-            items(items = sadEffects.value){
-                EffectsListItem(
-                    it.rate,
-                    it.description
+
+            if (deleteEffect){
+                AlertDialog(
+                    onDismissRequest = {
+                        deleteEffect = false
+                        effectToDelete = null
+                    },
+                    dismissButton = {
+                        TextButton(onClick = {
+                            deleteEffect = false
+                            effectToDelete = null
+                        }) {
+                            Text(text = "Cancel")
+                        }
+                    },
+                    confirmButton = {
+                        TextButton(onClick = {
+                            deleteEffect = false
+                            viewModel.deleteEffect(effectToDelete!!)
+                            effectToDelete = null
+                        }) {
+                            Text(text = "Confirm")
+                        }
+                    },
+                    icon = {
+                        Icon(imageVector = Icons.Default.Delete, contentDescription = null)
+                    },
+                    text = {
+                        Text(text = "You are about to delete an effect from your day! Remember that effects will not be deleted from your life." +
+                                "\nDo you want to permanently delete this effect?")
+                    },
+                    title = {
+                        Text(text = "Delete Effect?")
+                    }
                 )
+            }
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(start = 32.dp, end = 32.dp, top = 16.dp),
+                verticalArrangement = Arrangement.Top,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                items(items = sadEffects.value) {
+
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ){
+
+                        var date: String? by remember {
+                            mutableStateOf(null)
+                        }
+
+                        LaunchedEffect(key1 = Unit){
+                            viewModel.getDayById(it.foreignKey).collectLatest {
+                                date = "${it.day}/${it.month}/${it.year}"
+                            }
+                        }
+
+                        EffectsListItem(
+                            it.rate,
+                            it.description,
+                            date
+                        ) {
+                            effectToDelete = it
+                            deleteEffect = true
+                        }
+                    }
+                }
             }
         }
     }

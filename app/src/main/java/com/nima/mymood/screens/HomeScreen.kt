@@ -1,6 +1,7 @@
 package com.nima.mymood.screens
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -9,12 +10,14 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -23,6 +26,7 @@ import androidx.navigation.NavController
 import com.nima.mymood.R
 import com.nima.mymood.components.EffectsListItem
 import com.nima.mymood.model.Day
+import com.nima.mymood.model.Effect
 import com.nima.mymood.navigation.Screens
 import com.nima.mymood.ui.theme.*
 import com.nima.mymood.utils.Calculate
@@ -54,6 +58,14 @@ fun HomeScreen(
     val dayOfWeek by remember{
         mutableStateOf(calendar.get(Calendar.DAY_OF_WEEK))
     }
+
+    var deleteEffect by remember {
+        mutableStateOf(false)
+    }
+
+    var effectToDelete: Effect? by remember {
+        mutableStateOf(null)
+    }
     
     val today = produceState<Day?>(initialValue = null){
         value = viewModel.getDayByDate(year, month, day)
@@ -66,6 +78,42 @@ fun HomeScreen(
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ){
+        if (deleteEffect){
+            AlertDialog(
+                onDismissRequest = {
+                    deleteEffect = false
+                    effectToDelete = null
+                },
+                dismissButton = {
+                    TextButton(onClick = {
+                        deleteEffect = false
+                        effectToDelete = null
+                    }) {
+                        Text(text = "Cancel")
+                    }
+                },
+                confirmButton = {
+                    TextButton(onClick = {
+                        deleteEffect = false
+                        viewModel.deleteEffect(effectToDelete!!)
+                        effectToDelete = null
+                    }) {
+                        Text(text = "Confirm")
+                    }
+                },
+                icon = {
+                    Icon(imageVector = Icons.Default.Delete, contentDescription = null)
+                },
+                text = {
+                    Text(text = "You are about to delete an effect from your day! Remember that effects will not be deleted from your life." +
+                            "\nDo you want to permanently delete this effect?")
+                },
+                title = {
+                    Text(text = "Delete Effect?")
+                }
+            )
+        }
+
         CenterAlignedTopAppBar(
             title = {
                 Text(text = "${Calculate.calculateDayName(dayOfWeek)} " +
@@ -164,7 +212,10 @@ fun HomeScreen(
                             EffectsListItem(
                                 it.rate,
                                 it.description
-                            )
+                            ){
+                                effectToDelete = it
+                                deleteEffect = true
+                            }
                         }
                     }
 

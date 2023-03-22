@@ -1,13 +1,20 @@
 package com.nima.mymood.screens
 
 import android.Manifest
+import android.app.DatePickerDialog
 import android.content.pm.PackageManager
 import android.os.Environment
+import android.util.AttributeSet
 import android.util.Log
 import android.util.Xml
+import android.view.ContextThemeWrapper
+import android.widget.DatePicker
+import android.widget.NumberPicker
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -22,22 +29,27 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.colorspace.Rgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
 import com.nima.mymood.components.MenuItems
 import com.nima.mymood.R
+import com.nima.mymood.ThemeDataStore
 import com.nima.mymood.model.Day
 import com.nima.mymood.model.Effect
 import com.nima.mymood.navigation.Screens
+import com.nima.mymood.ui.theme.MyMoodTheme
 import com.nima.mymood.ui.theme.neutral
 import com.nima.mymood.ui.theme.very_dissatisfied
 import com.nima.mymood.ui.theme.very_satisfied
 import com.nima.mymood.viewmodels.MenuViewModel
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.onEach
 import org.xmlpull.v1.XmlPullParser
 import org.xmlpull.v1.XmlPullParserFactory
@@ -47,6 +59,7 @@ import java.io.FileOutputStream
 import java.util.*
 import kotlin.coroutines.coroutineContext
 
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun MenuScreen(
     navController: NavController,
@@ -58,6 +71,10 @@ fun MenuScreen(
     }
 
     val context = LocalContext.current
+    
+    val themeDataStore = ThemeDataStore(context)
+    
+    val isDark = themeDataStore.getTheme.collectAsState(initial = false).value
 
     var showExportDialog by remember{
         mutableStateOf(false)
@@ -98,118 +115,131 @@ fun MenuScreen(
             )
         }
 
-        if (showConfirmImport){
-            AlertDialog(onDismissRequest = { if (!showImportDialog){
-                showConfirmImport = false
-            }
+        if (showConfirmImport) {
+            AlertDialog(onDismissRequest = {
+                if (!showImportDialog) {
+                    showConfirmImport = false
+                }
             },
                 title = {
-                    if (!showImportDialog){ Text(text = "Delete Previous Data?") }
+                    if (!showImportDialog) {
+                        Text(text = "Delete Previous Data?")
+                    }
                 },
                 text = {
-                    if (!showImportDialog){
+                    if (!showImportDialog) {
                         Text(
                             text = "In order to import your data the previous saved data on database will be deleted forever." +
                                     " Do you want to proceed?"
                         )
-                    }else{
+                    } else {
                         Text(text = "Import in progress. Please wait until process is done!")
                     }
                 },
                 icon = {
-                    if (!showImportDialog){ Icon(imageVector = Icons.Default.Delete, contentDescription = null) }
-                    else{
+                    if (!showImportDialog) {
+                        Icon(imageVector = Icons.Default.Delete, contentDescription = null)
+                    } else {
                         CircularProgressIndicator()
                     }
                 },
                 dismissButton = {
-                    TextButton(onClick = {
-                        showConfirmImport = false
-                    },
+                    TextButton(
+                        onClick = {
+                            showConfirmImport = false
+                        },
                         enabled = !showImportDialog
                     ) {
                         Text(text = "Cancel")
                     }
                 },
                 confirmButton = {
-                    TextButton(onClick = {
-                        if (File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
-                                "MyMoodExported.xml"
-                            ).isFile){
-                            showImportDialog = true
-                            viewModel.deleteAllDays()
-                            viewModel.getAllEffects()
-                            val importFile = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
-                                "MyMoodExported.xml"
-                            )
-                            try{
-                                val fileIn = FileInputStream(importFile)
-
-                                val parserFactory = XmlPullParserFactory.newInstance()
-                                val parser = parserFactory.newPullParser()
-
-                                parser.setFeature(
-                                    XmlPullParser.FEATURE_PROCESS_NAMESPACES,
-                                    false
+                    TextButton(
+                        onClick = {
+                            if (File(
+                                    Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
+                                    "MyMoodExported.xml"
+                                ).isFile
+                            ) {
+                                showImportDialog = true
+                                viewModel.deleteAllDays()
+                                viewModel.getAllEffects()
+                                val importFile = File(
+                                    Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
+                                    "MyMoodExported.xml"
                                 )
-                                parser.setInput(fileIn, "UTF-8")
+                                try {
+                                    val fileIn = FileInputStream(importFile)
 
-                                var tag: String? = ""
-                                var event = parser.eventType
-                                var dayId: UUID? = null
+                                    val parserFactory = XmlPullParserFactory.newInstance()
+                                    val parser = parserFactory.newPullParser()
 
-                                while (event != XmlPullParser.END_DOCUMENT) {
-                                    tag = parser.name
-                                    when (event) {
-                                        XmlPullParser.START_TAG -> {
-                                            if (tag == "Day") {
-                                                dayId = UUID.randomUUID()
-                                                val day = parser.getAttributeValue("", "day")
-                                                val month =
-                                                    parser.getAttributeValue("", "month")
-                                                val year = parser.getAttributeValue("", "year")
-                                                viewModel.addDay(
-                                                    Day(
-                                                        dayId,
-                                                        day.toInt(),
-                                                        month.toInt(),
-                                                        year.toInt()
+                                    parser.setFeature(
+                                        XmlPullParser.FEATURE_PROCESS_NAMESPACES,
+                                        false
+                                    )
+                                    parser.setInput(fileIn, "UTF-8")
+
+                                    var tag: String? = ""
+                                    var event = parser.eventType
+
+                                    while (event != XmlPullParser.END_DOCUMENT) {
+                                        tag = parser.name
+                                        when (event) {
+                                            XmlPullParser.START_TAG -> {
+                                                if (tag == "Day") {
+                                                    val day = parser.getAttributeValue("", "day")
+                                                    val month =
+                                                        parser.getAttributeValue("", "month")
+                                                    val year = parser.getAttributeValue("", "year")
+                                                    val id = parser.getAttributeValue("", "id")
+                                                    viewModel.addDay(
+                                                        Day(
+                                                            UUID.fromString(id),
+                                                            day.toInt(),
+                                                            month.toInt(),
+                                                            year.toInt()
+                                                        )
                                                     )
-                                                )
+                                                }
+                                                if (tag == "Effect") {
+                                                    val description =
+                                                        parser.getAttributeValue("", "description")
+                                                    val rate = parser.getAttributeValue("", "rate")
+                                                    val eId = parser.getAttributeValue("", "id")
+                                                    val fk = parser.getAttributeValue("", "fk")
+                                                    viewModel.addEffect(
+                                                        Effect(
+                                                            id = UUID.fromString(eId),
+                                                            foreignKey = UUID.fromString(fk),
+                                                            description = description,
+                                                            rate = rate.toInt()
+                                                        )
+                                                    )
+                                                }
                                             }
-                                            if (tag == "Effect") {
-                                                val description =
-                                                    parser.getAttributeValue("", "description")
-                                                val rate = parser.getAttributeValue("", "rate")
-                                                viewModel.addEffect(
-                                                    Effect(
-                                                        foreignKey = dayId!!,
-                                                        description = description,
-                                                        rate = rate.toInt()
-                                                    )
-                                                )
+                                            XmlPullParser.END_TAG -> {
+                                                if (tag == "MyMood") {
+                                                    showImportDialog = false
+                                                    showConfirmImport = false
+                                                }
                                             }
                                         }
-                                        XmlPullParser.END_TAG -> {
-                                            if (tag == "MyMood"){
-                                                showImportDialog = false
-                                                showConfirmImport = false
-                                            }
-                                        }
+                                        event = parser.next()
                                     }
-                                    event = parser.next()
+                                } catch (e: Exception) {
+                                    e.printStackTrace()
+                                    showImportDialog = false
+                                    showConfirmImport = false
                                 }
-                            }catch (e: Exception){
-                                e.printStackTrace()
-                                showImportDialog = false
-                                showConfirmImport = false
+                            } else {
+                                Toast.makeText(
+                                    context,
+                                    "Either the file (MyMoodExported.xml) does not exist in downloads directory or it has been renamed",
+                                    Toast.LENGTH_LONG
+                                ).show()
                             }
-                        }else{
-                            Toast.makeText(context,
-                                "Either the file (MyMoodExported.xml) does not exist in downloads directory or it has been renamed",
-                                Toast.LENGTH_LONG).show()
-                        }
-                    },
+                        },
                         enabled = !showImportDialog
                     ) {
                         Text(text = "Confirm")
@@ -218,13 +248,41 @@ fun MenuScreen(
             )
         }
 
-        FilledIconButton(onClick = {
-            navController.popBackStack()
-        },
-            shape = CircleShape,
-            modifier = Modifier.padding(16.dp)
-        ) {
-            Icon(imageVector = Icons.Outlined.Home, contentDescription = null)
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Start
+        ){
+            FilledIconButton(
+                onClick = {
+                    navController.popBackStack()
+                },
+                shape = CircleShape,
+                modifier = Modifier.padding(16.dp)
+            ) {
+                Icon(imageVector = Icons.Outlined.Home, contentDescription = null)
+            }
+            Spacer(modifier = Modifier.weight(1f))
+
+            FilledIconButton(
+                onClick = {
+                    scope.launch { 
+                        themeDataStore.saveTheme(!isDark!!)
+                    }
+                },
+                shape = CircleShape,
+                modifier = Modifier.padding(16.dp)
+            ) {
+                AnimatedContent(targetState = isDark) {
+                    if (isDark == true){
+                        Icon(painter = painterResource(id = R.drawable.ic_baseline_light_mode_24),
+                            contentDescription = null)
+                    }else{
+                        Icon(painter = painterResource(id = R.drawable.ic_baseline_dark_mode_24),
+                            contentDescription = null)
+                    }
+                }
+            }
         }
 
         LazyVerticalGrid(columns = GridCells.Fixed(2),
@@ -319,6 +377,7 @@ fun MenuScreen(
                                         xmlSerializer.attribute("", "day", "${day.day}")
                                         xmlSerializer.attribute("", "month", "${day.month}")
                                         xmlSerializer.attribute("", "year", "${day.year}")
+                                        xmlSerializer.attribute("", "id", "${day.id.toString()}")
                                         val fk = day.id
                                         allEffects.filter {
                                             it.foreignKey == fk
@@ -334,6 +393,17 @@ fun MenuScreen(
                                                 "rate",
                                                 "${effect.rate}"
                                             )
+                                            xmlSerializer.attribute(
+                                                "",
+                                                "id",
+                                                "${effect.id}"
+                                            )
+                                            xmlSerializer.attribute(
+                                                "",
+                                                "fk",
+                                                "${effect.foreignKey}"
+                                            )
+
                                             xmlSerializer.endTag("", "Effect")
                                         }
                                         xmlSerializer.endTag("", "Day")
