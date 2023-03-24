@@ -130,7 +130,8 @@ fun MenuScreen(
                     if (!showImportDialog) {
                         Text(
                             text = "In order to import your data the previous saved data on database will be deleted forever." +
-                                    " Do you want to proceed?"
+                                    "\nWith the newest version of this app, importing the data from old files will not be possible because of the new structure of the exported file. The new exported data is saved under the name: MyMoodExportedV2.xml" +
+                                    "\nDo you want to proceed?"
                         )
                     } else {
                         Text(text = "Import in progress. Please wait until process is done!")
@@ -158,7 +159,7 @@ fun MenuScreen(
                         onClick = {
                             if (File(
                                     Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
-                                    "MyMoodExported.xml"
+                                    "MyMoodExportedV2.xml"
                                 ).isFile
                             ) {
                                 showImportDialog = true
@@ -166,7 +167,7 @@ fun MenuScreen(
                                 viewModel.getAllEffects()
                                 val importFile = File(
                                     Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
-                                    "MyMoodExported.xml"
+                                    "MyMoodExportedV2.xml"
                                 )
                                 try {
                                     val fileIn = FileInputStream(importFile)
@@ -235,7 +236,7 @@ fun MenuScreen(
                             } else {
                                 Toast.makeText(
                                     context,
-                                    "Either the file (MyMoodExported.xml) does not exist in downloads directory or it has been renamed",
+                                    "Either the file (MyMoodExportedV2.xml) does not exist in downloads directory or it has been renamed",
                                     Toast.LENGTH_LONG
                                 ).show()
                             }
@@ -293,7 +294,7 @@ fun MenuScreen(
         ){
             item {
                 MenuItems(icon = null,
-                    icon2 = R.drawable.ic_outline_sentiment_very_dissatisfied_24,
+                    icon2 = R.drawable.ic_outline_sentiment_very_satisfied_24,
                     title = "Happy Effects",
                     tint = very_satisfied
                 ) {
@@ -350,7 +351,7 @@ fun MenuScreen(
                             val exportedData = File(
                                 Environment.getExternalStoragePublicDirectory(
                                     Environment.DIRECTORY_DOWNLOADS
-                                ), "MyMoodExported.xml")
+                                ), "MyMoodExportedV2.xml")
                             try {
                                 exportedData.createNewFile()
                             }catch (e: Exception){
@@ -415,7 +416,7 @@ fun MenuScreen(
                                         fileOs?.close()
                                     }
                                     showExportDialog = false
-                                    Toast.makeText(context, "File \"MyMoodExported.xml\" saved to downloads", Toast.LENGTH_LONG).show()
+                                    Toast.makeText(context, "File \"MyMoodExportedV2.xml\" saved to downloads", Toast.LENGTH_LONG).show()
                                     }
                             }catch (e: Exception){
                                 e.printStackTrace()

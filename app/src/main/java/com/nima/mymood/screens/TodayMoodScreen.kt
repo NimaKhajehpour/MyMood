@@ -3,6 +3,8 @@ package com.nima.mymood.screens
 import android.util.Log
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.AbsoluteRoundedCornerShape
 import androidx.compose.foundation.shape.CircleShape
@@ -66,8 +68,7 @@ fun TodayMoodScreen(
 
         Column(
             modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState()),
+                .fillMaxSize(),
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -88,9 +89,10 @@ fun TodayMoodScreen(
                     },
                     confirmButton = {
                         TextButton(onClick = {
-                            deleteEffect = false
-                            viewModel.deleteEffect(effectToDelete!!)
-                            effectToDelete = null
+                            viewModel.deleteEffect(effectToDelete!!).invokeOnCompletion {
+                                deleteEffect = false
+                                effectToDelete = null
+                            }
                         }) {
                             Text(text = "Confirm")
                         }
@@ -108,212 +110,228 @@ fun TodayMoodScreen(
                 )
             }
 
-            Text(text = "${Calculate.calculateMonthName(day.value!!.month)} " +
-                    "${day.value!!.day} ${day.value!!.year}",
-                style = MaterialTheme.typography.bodyLarge,
-                modifier = Modifier.padding(16.dp)
-            )
-
-            ElevatedCard(
-                shape = RoundedCornerShape(5.dp),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 12.dp),
-                elevation = CardDefaults.elevatedCardElevation(10.dp)
+            LazyColumn(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.Top,
+                horizontalAlignment = Alignment.CenterHorizontally
             ){
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(0.dp),
-                    verticalArrangement = Arrangement.Top,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ){
+                item {
+                    Text(text = "${Calculate.calculateMonthName(day.value!!.month)} " +
+                            "${day.value!!.day} ${day.value!!.year}",
+                        style = MaterialTheme.typography.bodyLarge,
+                        modifier = Modifier.padding(16.dp)
+                    )
+                }
+
+                item{
+                    ElevatedCard(
+                        shape = RoundedCornerShape(5.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 12.dp),
+                        elevation = CardDefaults.elevatedCardElevation(10.dp)
+                    ){
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(0.dp),
+                            verticalArrangement = Arrangement.Top,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ){
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 8.dp, horizontal = 12.dp)
+                                ,
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.Start
+                            ) {
+                                Text(
+                                    text = "What effected your mood today?",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    fontWeight = FontWeight.Light
+                                )
+                            }
+
+                            OutlinedTextField(value = effectDescription,
+                                onValueChange = {
+                                    effectDescription = it
+                                },
+                                label = {
+                                    Text(text = "Effect")
+                                },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 5.dp, horizontal = 12.dp),
+                                singleLine = false
+                            )
+
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 8.dp, horizontal = 12.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceAround
+                            ) {
+                                FilledIconToggleButton(checked = effectRate == 0,
+                                    onCheckedChange = {
+                                        effectRate = 0
+                                    },
+                                    shape = CircleShape,
+                                    colors = IconButtonDefaults.iconToggleButtonColors(
+                                        checkedContainerColor = animateColorAsState(
+                                            targetValue = if (effectRate == 0) Color.LightGray else Color.Transparent
+                                        ).value
+                                    )
+                                ) {
+                                    Icon(painter = painterResource(id = R.drawable.ic_outline_sentiment_very_satisfied_24),
+                                        contentDescription = null,
+                                        tint = very_satisfied
+                                    )
+                                }
+                                FilledIconToggleButton(checked = effectRate == 1,
+                                    onCheckedChange = {
+                                        effectRate = 1
+                                    },
+                                    shape = CircleShape,
+                                    colors = IconButtonDefaults.iconToggleButtonColors(
+                                        checkedContainerColor = animateColorAsState(
+                                            targetValue = if (effectRate == 1) Color.LightGray else Color.Transparent
+                                        ).value
+                                    )
+                                ) {
+                                    Icon(painter = painterResource(id = R.drawable.ic_outline_sentiment_satisfied_alt_24),
+                                        contentDescription = null,
+                                        tint = satisfied
+                                    )
+                                }
+                                FilledIconToggleButton(checked = effectRate == 2,
+                                    onCheckedChange = {
+                                        effectRate = 2
+                                    },
+                                    shape = CircleShape,
+                                    colors = IconButtonDefaults.iconToggleButtonColors(
+                                        checkedContainerColor = animateColorAsState(
+                                            targetValue = if (effectRate == 2) Color.LightGray else Color.Transparent
+                                        ).value
+                                    )
+                                ) {
+                                    Icon(painter = painterResource(id = R.drawable.ic_outline_sentiment_neutral_24),
+                                        contentDescription = null,
+                                        tint = neutral
+                                    )
+                                }
+                                FilledIconToggleButton(checked = effectRate == 3,
+                                    onCheckedChange = {
+                                        effectRate = 3
+                                    },
+                                    shape = CircleShape,
+                                    colors = IconButtonDefaults.iconToggleButtonColors(
+                                        checkedContainerColor = animateColorAsState(
+                                            targetValue = if (effectRate == 3) Color.LightGray else Color.Transparent
+                                        ).value
+                                    )
+                                ) {
+                                    Icon(painter = painterResource(id = R.drawable.ic_outline_sentiment_dissatisfied_24),
+                                        contentDescription = null,
+                                        tint = dissatisfied
+                                    )
+                                }
+                                FilledIconToggleButton(checked = effectRate == 4,
+                                    onCheckedChange = {
+                                        effectRate = 4
+                                    },
+                                    shape = CircleShape,
+                                    colors = IconButtonDefaults.iconToggleButtonColors(
+                                        checkedContainerColor = animateColorAsState(
+                                            targetValue = if (effectRate == 4) Color.LightGray else Color.Transparent
+                                        ).value
+                                    )
+                                ) {
+                                    Icon(painter = painterResource(id = R.drawable.ic_outline_sentiment_very_dissatisfied_24),
+                                        contentDescription = null,
+                                        tint = very_dissatisfied
+                                    )
+                                }
+                            }
+
+                            Button(onClick = {
+                                val effect = Effect(foreignKey = UUID.fromString(id),
+                                    description = effectDescription.trim(),
+                                    rate = effectRate
+                                )
+                                effectDescription = ""
+                                effectRate = 2
+                                runBlocking {
+                                    launch {
+                                        viewModel.addEffect(effect)
+                                    }
+                                }
+                            },
+                                enabled = effectDescription.isNotBlank(),
+                                shape = RoundedCornerShape(
+                                    5.dp
+                                ),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 8.dp, horizontal = 12.dp)
+                            ) {
+                                Text(text = "Add Effect")
+                            }
+                        }
+                    }
+                }
+
+                item{
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(vertical = 8.dp, horizontal = 12.dp)
-                        ,
+                            .padding(vertical = 12.dp, horizontal = 16.dp),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.Start
                     ) {
-                        Text(
-                            text = "What effected your mood today?",
+                        Text(text = "Today's Effects",
                             style = MaterialTheme.typography.bodyMedium,
                             fontWeight = FontWeight.Light
                         )
                     }
+                }
 
-                    OutlinedTextField(value = effectDescription,
-                        onValueChange = {
-                            effectDescription = it
-                        },
-                        label = {
-                            Text(text = "Effect")
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 5.dp, horizontal = 12.dp),
-                        singleLine = false
-                    )
-
+                items(items = effectsList.value, key = {
+                    it.id
+                }) {
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(vertical = 8.dp, horizontal = 12.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceAround
+                            .padding(end = 16.dp, start = 32.dp, top = 4.dp, bottom = 4.dp),
+                        verticalAlignment = Alignment.Top,
+                        horizontalArrangement = Arrangement.Start
                     ) {
-                        FilledIconToggleButton(checked = effectRate == 0,
-                            onCheckedChange = {
-                                effectRate = 0
-                            },
-                            shape = CircleShape,
-                            colors = IconButtonDefaults.iconToggleButtonColors(
-                                checkedContainerColor = animateColorAsState(
-                                    targetValue = if (effectRate == 0) Color.LightGray else Color.Transparent
-                                ).value
-                            )
-                        ) {
-                            Icon(painter = painterResource(id = R.drawable.ic_outline_sentiment_very_satisfied_24),
-                                contentDescription = null,
-                                tint = very_satisfied
-                            )
-                        }
-                        FilledIconToggleButton(checked = effectRate == 1,
-                            onCheckedChange = {
-                                effectRate = 1
-                            },
-                            shape = CircleShape,
-                            colors = IconButtonDefaults.iconToggleButtonColors(
-                                checkedContainerColor = animateColorAsState(
-                                    targetValue = if (effectRate == 1) Color.LightGray else Color.Transparent
-                                ).value
-                            )
-                        ) {
-                            Icon(painter = painterResource(id = R.drawable.ic_outline_sentiment_satisfied_alt_24),
-                                contentDescription = null,
-                                tint = satisfied
-                            )
-                        }
-                        FilledIconToggleButton(checked = effectRate == 2,
-                            onCheckedChange = {
-                                effectRate = 2
-                            },
-                            shape = CircleShape,
-                            colors = IconButtonDefaults.iconToggleButtonColors(
-                                checkedContainerColor = animateColorAsState(
-                                    targetValue = if (effectRate == 2) Color.LightGray else Color.Transparent
-                                ).value
-                            )
-                        ) {
-                            Icon(painter = painterResource(id = R.drawable.ic_outline_sentiment_neutral_24),
-                                contentDescription = null,
-                                tint = neutral
-                            )
-                        }
-                        FilledIconToggleButton(checked = effectRate == 3,
-                            onCheckedChange = {
-                                effectRate = 3
-                            },
-                            shape = CircleShape,
-                            colors = IconButtonDefaults.iconToggleButtonColors(
-                                checkedContainerColor = animateColorAsState(
-                                    targetValue = if (effectRate == 3) Color.LightGray else Color.Transparent
-                                ).value
-                            )
-                        ) {
-                            Icon(painter = painterResource(id = R.drawable.ic_outline_sentiment_dissatisfied_24),
-                                contentDescription = null,
-                                tint = dissatisfied
-                            )
-                        }
-                        FilledIconToggleButton(checked = effectRate == 4,
-                            onCheckedChange = {
-                                effectRate = 4
-                            },
-                            shape = CircleShape,
-                            colors = IconButtonDefaults.iconToggleButtonColors(
-                                checkedContainerColor = animateColorAsState(
-                                    targetValue = if (effectRate == 4) Color.LightGray else Color.Transparent
-                                ).value
-                            )
-                        ) {
-                            Icon(painter = painterResource(id = R.drawable.ic_outline_sentiment_very_dissatisfied_24),
-                                contentDescription = null,
-                                tint = very_dissatisfied
-                            )
+                        EffectsListItem(
+                            effectRate = it.rate,
+                            effectDescription = it.description
+                        ){
+                            effectToDelete = it
+                            deleteEffect = true
                         }
                     }
+                }
 
-                    Button(onClick = {
-                        val effect = Effect(foreignKey = UUID.fromString(id),
-                            description = effectDescription.trim(),
-                            rate = effectRate
-                        )
-                        effectDescription = ""
-                        effectRate = 2
-                        runBlocking {
-                            launch {
-                                viewModel.addEffect(effect)
-                            }
-                        }
-                    },
-                        enabled = effectDescription.isNotBlank(),
-                        shape = RoundedCornerShape(
-                            5.dp
-                        ),
+                item {
+                    Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(vertical = 8.dp, horizontal = 12.dp)
+                            .padding(horizontal = 10.dp, vertical = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.End
                     ) {
-                        Text(text = "Add Effect")
+
+                        TextButton(onClick = {
+                            navController.popBackStack()
+                        }) {
+                            Text(text = "Save")
+                        }
                     }
-                }
-            }
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 12.dp, horizontal = 16.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Start
-            ) {
-                Text(text = "Today's Effects",
-                    style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = FontWeight.Light
-                )
-            }
-
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(end = 16.dp, start = 32.dp, top = 8.dp, bottom = 10.dp),
-                verticalArrangement = Arrangement.Top,
-                horizontalAlignment = Alignment.Start
-            ) {
-                effectsList.value.forEach {
-                    EffectsListItem(
-                        effectRate = it.rate,
-                        effectDescription = it.description
-                    ){
-                        effectToDelete = it
-                        deleteEffect = true
-                    }
-                }
-            }
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 10.dp, vertical = 8.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.End
-            ) {
-
-                TextButton(onClick = {
-                    navController.popBackStack()
-                }) {
-                    Text(text = "Save")
                 }
             }
         }

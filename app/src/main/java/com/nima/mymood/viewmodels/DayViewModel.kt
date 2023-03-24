@@ -2,6 +2,7 @@ package com.nima.mymood.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.nima.mymood.model.Day
 import com.nima.mymood.model.Effect
 import com.nima.mymood.repository.MoodRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -22,4 +23,9 @@ class DayViewModel @Inject constructor(private val repository: MoodRepository)
         repository.deleteEffect(effect)
 
     }
+
+    fun deleteDay(day: Day) =
+        viewModelScope.launch {
+            repository.deleteDay(day)
+        }
 }

@@ -3,12 +3,11 @@ package com.nima.mymood.screens
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
+import androidx.compose.material.icons.outlined.Edit
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -16,6 +15,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.nima.mymood.components.EffectsListItem
 import com.nima.mymood.model.Effect
+import com.nima.mymood.navigation.Screens
 import com.nima.mymood.utils.Calculate
 import com.nima.mymood.viewmodels.DayViewModel
 import java.util.*
@@ -36,6 +36,10 @@ fun DayScreen (
 
     var effectToDelete: Effect? by remember {
         mutableStateOf(null)
+    }
+
+    var cancelDelete by remember {
+        mutableStateOf(false)
     }
 
     if (day.value != null){
@@ -61,9 +65,10 @@ fun DayScreen (
                     },
                     confirmButton = {
                         TextButton(onClick = {
-                            deleteEffect = false
-                            viewModel.deleteEffect(effectToDelete!!)
-                            effectToDelete = null
+                            viewModel.deleteEffect(effectToDelete!!).invokeOnCompletion {
+                                deleteEffect = false
+                                effectToDelete = null
+                            }
                         }) {
                             Text(text = "Confirm")
                         }
@@ -81,18 +86,77 @@ fun DayScreen (
                 )
             }
 
+            if (effects.value.isEmpty() && !cancelDelete){
+
+                AlertDialog(onDismissRequest = {
+                    cancelDelete = true
+                },
+                    icon = {
+                        Icon(imageVector = Icons.Default.Delete, contentDescription = null)
+                    },
+                    title = {
+                        Text(text = "Delete This Day?")
+                    },
+                    text = {
+                        Text(text = "Seems like this day does not have any entries for effects. You can delete this day if you want," +
+                                " remember you can add this day with effects anytime you want." +
+                                "\nDo you want to delete this day?")
+                    },
+                    confirmButton = {
+                        TextButton(onClick = {
+                            viewModel.deleteDay(day.value!!).invokeOnCompletion {
+                                navController.popBackStack()
+                            }
+                        },
+                            colors = ButtonDefaults.textButtonColors(
+                                contentColor = MaterialTheme.colorScheme.error
+                            )
+                        ) {
+                            Text(text = "Delete Day")
+                        }
+                    },
+                    dismissButton = {
+                        TextButton(onClick = {
+                            cancelDelete = true
+                        }) {
+                            Text(text = "Cancel")
+                        }
+                    }
+                )
+            }
+
             Text(text = "${Calculate.calculateMonthName(day.value!!.month)} " +
                     "${day.value!!.day} ${day.value!!.year}",
                 modifier = Modifier.padding(vertical = 16.dp)
             )
 
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp, horizontal = 16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.End
+            ) {
+                ElevatedButton(onClick = {
+                    // go to edit
+                    navController.navigate(Screens.TodayMoodScreen.name+"/${id!!}")
+                },
+                    shape = RoundedCornerShape(5.dp),
+                    elevation = ButtonDefaults.elevatedButtonElevation(15.dp)
+                ) {
+                    Icon(imageVector = Icons.Outlined.Edit, contentDescription = null)
+                }
+            }
+
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(vertical = 8.dp, horizontal = 32.dp),
+                contentPadding = PaddingValues(vertical = 8.dp, horizontal = 16.dp),
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.CenterHorizontally
             ){
-                items(items = effects.value){
+                items(items = effects.value, key ={
+                    it.id
+                }){
                     EffectsListItem(
                         it.rate,
                         it.description

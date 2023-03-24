@@ -81,9 +81,10 @@ fun NeutralEffectsScreen(
                     },
                     confirmButton = {
                         TextButton(onClick = {
-                            deleteEffect = false
-                            viewModel.deleteEffect(effectToDelete!!)
-                            effectToDelete = null
+                            viewModel.deleteEffect(effectToDelete!!).invokeOnCompletion {
+                                deleteEffect = false
+                                effectToDelete = null
+                            }
                         }) {
                             Text(text = "Confirm")
                         }
@@ -107,7 +108,9 @@ fun NeutralEffectsScreen(
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                items(items = neutralEffects.value) {
+                items(items = neutralEffects.value, key ={
+                    it.id
+                }) {
                     Column(
                         modifier = Modifier.fillMaxWidth(),
                         verticalArrangement = Arrangement.Center,

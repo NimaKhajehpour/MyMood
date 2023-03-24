@@ -84,8 +84,7 @@ fun HomeScreen(
 
     Column(
         modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState()),
+            .fillMaxSize(),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ){
@@ -105,9 +104,10 @@ fun HomeScreen(
                 },
                 confirmButton = {
                     TextButton(onClick = {
-                        deleteEffect = false
-                        viewModel.deleteEffect(effectToDelete!!)
-                        effectToDelete = null
+                        viewModel.deleteEffect(effectToDelete!!).invokeOnCompletion {
+                            effectToDelete = null
+                            deleteEffect = false
+                        }
                     }) {
                         Text(text = "Confirm")
                     }
@@ -296,13 +296,21 @@ fun HomeScreen(
                         verticalArrangement = Arrangement.Top,
                         horizontalAlignment = Alignment.Start
                     ){
-                        effects.value.forEach {
-                            EffectsListItem(
-                                it.rate,
-                                it.description
-                            ){
-                                effectToDelete = it
-                                deleteEffect = true
+                        LazyColumn(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalArrangement = Arrangement.Top,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ){
+                            items(items = effects.value, key = {
+                                it.id
+                            }) {
+                                EffectsListItem(
+                                    it.rate,
+                                    it.description
+                                ) {
+                                    effectToDelete = it
+                                    deleteEffect = true
+                                }
                             }
                         }
                     }

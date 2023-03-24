@@ -1,0 +1,8 @@
+In this version:
+    - Users can toggle the app theme to dark and light
+    - Users can long press the effect records to delete them
+    - Every day entry that has not effect can be deleted now
+    - In any effects list other than a specific day list, Effects have date of the effect on the card
+    - User can add effects for any day they want
+    - Exported data from database is changed so that importing the data from old version of the app is impossible
+        - Suggested way is to update the app first and then export the database

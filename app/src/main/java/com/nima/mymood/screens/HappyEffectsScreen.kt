@@ -81,9 +81,10 @@ fun HappyEffectsScreen (
                     },
                     confirmButton = {
                         TextButton(onClick = {
-                            deleteEffect = false
-                            viewModel.deleteEffect(effectToDelete!!)
-                            effectToDelete = null
+                            viewModel.deleteEffect(effectToDelete!!).invokeOnCompletion {
+                                effectToDelete = null
+                                deleteEffect = false
+                            }
                         }) {
                             Text(text = "Confirm")
                         }
@@ -106,7 +107,9 @@ fun HappyEffectsScreen (
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                items(items = happyEffects.value) {
+                items(items = happyEffects.value, key = {
+                    it.id
+                }) {
                     Column(
                         modifier = Modifier.fillMaxWidth(),
                         verticalArrangement = Arrangement.Center,

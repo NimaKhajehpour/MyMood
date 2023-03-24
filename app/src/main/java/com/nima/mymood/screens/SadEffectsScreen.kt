@@ -89,9 +89,10 @@ fun SadEffectsScreen(
                     },
                     confirmButton = {
                         TextButton(onClick = {
-                            deleteEffect = false
-                            viewModel.deleteEffect(effectToDelete!!)
-                            effectToDelete = null
+                            viewModel.deleteEffect(effectToDelete!!).invokeOnCompletion {
+                                effectToDelete = null
+                                deleteEffect = false
+                            }
                         }) {
                             Text(text = "Confirm")
                         }
@@ -114,7 +115,9 @@ fun SadEffectsScreen(
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                items(items = sadEffects.value) {
+                items(items = sadEffects.value, key ={
+                    it.id
+                }) {
 
                     Column(
                         modifier = Modifier.fillMaxWidth(),
