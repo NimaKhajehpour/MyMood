@@ -1,6 +1,8 @@
 package com.nima.mymood.screens
 
 import android.annotation.SuppressLint
+import android.util.Log
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -45,6 +47,8 @@ fun HomeScreen(
 
     val calendar = Calendar.getInstance()
 
+    val scope = rememberCoroutineScope()
+
     val year by remember {
         mutableStateOf(calendar.get(Calendar.YEAR))
     }
@@ -70,6 +74,13 @@ fun HomeScreen(
     val today = produceState<Day?>(initialValue = null){
         value = viewModel.getDayByDate(year, month, day)
     }.value
+
+    var showDatePicker by remember {
+        mutableStateOf(false)
+    }
+
+    val datePickerState = rememberDatePickerState()
+    datePickerState.displayMode = DisplayMode.Input
 
     Column(
         modifier = Modifier
@@ -114,13 +125,90 @@ fun HomeScreen(
             )
         }
 
+        if (showDatePicker){
+            DatePickerDialog(
+                onDismissRequest = {
+                    showDatePicker = false
+                    datePickerState.setSelection(null)
+                                   },
+                confirmButton = {
+                    TextButton(onClick = {
+                        // get date and go to mood editing
+                        val date = Date(datePickerState.selectedDateMillis!!)
+                        val selectedDay = date.date+1
+                        val selectedMonth = date.month+1
+                        val selectedYear = date.year+1900
+                        var selectedDate: Day? = null
+                        scope.launch {
+                            selectedDate = viewModel.getDayByDate(selectedYear, selectedMonth, selectedDay)
+                        }.invokeOnCompletion {
+                            if (selectedDate == null){
+                                val tempDay = Day(day = selectedDay, month = selectedMonth, year = selectedYear)
+                                scope.launch {
+                                    viewModel.addDay(tempDay)
+                                }.invokeOnCompletion {
+                                    datePickerState.setSelection(null)
+                                    showDatePicker = false
+                                    navController.navigate(
+                                        Screens.TodayMoodScreen.name+"/${tempDay.id}")
+                                }
+                            }else{
+                                val dayId = selectedDate!!.id
+                                datePickerState.setSelection(null)
+                                showDatePicker = false
+                                navController.navigate(
+                                    Screens.TodayMoodScreen.name+"/${dayId}")
+                            }
+                        }
+                    },
+                        enabled = datePickerState.selectedDateMillis != null && datePickerState.selectedDateMillis!! <= calendar.timeInMillis,
+                        colors = ButtonDefaults.textButtonColors(
+                            contentColor = MaterialTheme.colorScheme.tertiary
+                        )
+                    ) {
+                        Text(text = "Edit Day")
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = {
+                        showDatePicker = false
+                        datePickerState.setSelection(null)
+                    }) {
+                        Text(text = "Cancel")
+                    }
+                }
+            ) {
+                DatePicker(
+                    state = datePickerState,
+                    title = {
+                        Text(text = "Select a Date")
+                    },
+                    dateValidator = {
+                        it <= calendar.timeInMillis
+                    },
+                    showModeToggle = false
+                )
+            }
+        }
+
         CenterAlignedTopAppBar(
             title = {
-                Text(text = "${Calculate.calculateDayName(dayOfWeek)} " +
-                        "${Calculate.calculateMonthName(month)} " +
-                        "$day $year",
-                    style = MaterialTheme.typography.bodyLarge
-                )
+                TextButton(
+                    onClick = {
+                        showDatePicker = true
+                    },
+                    border = BorderStroke(2.dp, MaterialTheme.colorScheme.tertiaryContainer),
+                    colors = ButtonDefaults.textButtonColors(
+                        contentColor = MaterialTheme.colorScheme.secondary
+                    )
+                ){
+                    Text(
+                        text = "${Calculate.calculateDayName(dayOfWeek)} " +
+                                "${Calculate.calculateMonthName(month)} " +
+                                "$day $year",
+                        style = MaterialTheme.typography.bodyLarge,
+                    )
+                }
             },
             actions = {
                 FilledIconButton(onClick = {
