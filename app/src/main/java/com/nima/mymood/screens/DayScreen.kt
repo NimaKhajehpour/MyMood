@@ -6,6 +6,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -38,7 +39,7 @@ fun DayScreen (
         mutableStateOf(null)
     }
 
-    var cancelDelete by remember {
+    var showDeleteDay by remember {
         mutableStateOf(false)
     }
 
@@ -86,10 +87,10 @@ fun DayScreen (
                 )
             }
 
-            if (effects.value.isEmpty() && !cancelDelete){
+            if (showDeleteDay){
 
                 AlertDialog(onDismissRequest = {
-                    cancelDelete = true
+                    showDeleteDay = false
                 },
                     icon = {
                         Icon(imageVector = Icons.Default.Delete, contentDescription = null)
@@ -117,7 +118,7 @@ fun DayScreen (
                     },
                     dismissButton = {
                         TextButton(onClick = {
-                            cancelDelete = true
+                            showDeleteDay = false
                         }) {
                             Text(text = "Cancel")
                         }
@@ -137,6 +138,21 @@ fun DayScreen (
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.End
             ) {
+
+                if (effects.value.isEmpty()){
+                    ElevatedButton(
+                        onClick = {
+                            showDeleteDay = true
+                        },
+                        shape = RoundedCornerShape(5.dp),
+                        elevation = ButtonDefaults.elevatedButtonElevation(15.dp)
+                    ) {
+                        Icon(imageVector = Icons.Outlined.Delete, contentDescription = null)
+                    }
+                }
+
+                Spacer(modifier = Modifier.weight(1f))
+
                 ElevatedButton(onClick = {
                     // go to edit
                     navController.navigate(Screens.TodayMoodScreen.name+"/${id!!}")

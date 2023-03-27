@@ -20,6 +20,7 @@ import com.nima.mymood.model.Effect
 import com.nima.mymood.viewmodels.NeutralEffectsViewModel
 import kotlinx.coroutines.flow.collectLatest
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NeutralEffectsScreen(
     navController: NavController,
