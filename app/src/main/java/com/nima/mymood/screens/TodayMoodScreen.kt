@@ -1,6 +1,7 @@
 package com.nima.mymood.screens
 
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -61,6 +62,13 @@ fun TodayMoodScreen(
     var effectToDelete: Effect? by remember {
         mutableStateOf(null)
     }
+    var updateEffect by remember {
+        mutableStateOf(false)
+    }
+
+    var effectToUpdate: Effect? by remember {
+        mutableStateOf(null)
+    }
 
     val effectsList = viewModel.getDayEffects(UUID.fromString(id!!)).collectAsState(initial = emptyList())
 
@@ -74,6 +82,43 @@ fun TodayMoodScreen(
         ) {
 
             if (deleteEffect){
+                AlertDialog(
+                    onDismissRequest = {
+                        deleteEffect = false
+                        effectToDelete = null
+                    },
+                    dismissButton = {
+                        TextButton(onClick = {
+                            deleteEffect = false
+                            effectToDelete = null
+                        }) {
+                            Text(text = "Cancel")
+                        }
+                    },
+                    confirmButton = {
+                        TextButton(onClick = {
+                            viewModel.deleteEffect(effectToDelete!!).invokeOnCompletion {
+                                deleteEffect = false
+                                effectToDelete = null
+                            }
+                        }) {
+                            Text(text = "Confirm")
+                        }
+                    },
+                    icon = {
+                        Icon(imageVector = Icons.Default.Delete, contentDescription = null)
+                    },
+                    text = {
+                        Text(text = "You are about to delete an effect from your day! Remember that effects will not be deleted from your life." +
+                                "\nDo you want to permanently delete this effect?")
+                    },
+                    title = {
+                        Text(text = "Delete Effect?")
+                    }
+                )
+            }
+
+            if (updateEffect){
                 AlertDialog(
                     onDismissRequest = {
                         deleteEffect = false
@@ -308,12 +353,17 @@ fun TodayMoodScreen(
                         horizontalArrangement = Arrangement.Start
                     ) {
                         EffectsListItem(
-                            effectRate = it.rate,
-                            effectDescription = it.description
-                        ){
-                            effectToDelete = it
-                            deleteEffect = true
-                        }
+                            it.rate,
+                            it.description,
+                            onLongPress = {
+                                effectToDelete = it
+                                deleteEffect = true
+                            },
+                            onDoubleTap = {
+                                effectToUpdate = it
+                                updateEffect = true
+                            }
+                        )
                     }
                 }
 

@@ -39,6 +39,9 @@ class MoodRepository @Inject constructor(private val dao: MoodDao) {
     suspend fun updateDay(day: Day) =
         dao.updateDay(day)
 
+    suspend fun updateEffect(effect: Effect) =
+        dao.updateEffect(effect)
+
     suspend fun deleteDay(day: Day) =
         dao.deleteDay(day)
 

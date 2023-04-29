@@ -20,6 +20,8 @@ class TodayMoodViewModel @Inject constructor(private val repository: MoodReposit
 
     suspend fun updateDay(day: Day) = repository.updateDay(day)
 
+    suspend fun updateEffect(effect: Effect) = repository.updateEffect(effect)
+
     fun getDayById(id: UUID) = repository.getDayById(id).distinctUntilChanged()
 
     fun getDayEffects(fk: UUID) = repository.getEffectsByFK(fk).distinctUntilChanged()

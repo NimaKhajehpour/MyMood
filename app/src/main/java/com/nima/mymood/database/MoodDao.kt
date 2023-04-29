@@ -41,6 +41,9 @@ interface MoodDao {
     @Update(onConflict = OnConflictStrategy.REPLACE)
     suspend fun updateDay(day: Day)
 
+    @Update
+    suspend fun updateEffect(effect: Effect)
+
     @Delete
     suspend fun deleteDay(day: Day)
 

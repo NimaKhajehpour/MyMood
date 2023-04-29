@@ -1,5 +1,6 @@
 package com.nima.mymood.screens
 
+import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -39,6 +40,14 @@ fun SadEffectsScreen(
     }
 
     var effectToDelete: Effect? by remember {
+        mutableStateOf(null)
+    }
+
+    var updateEffect by remember {
+        mutableStateOf(false)
+    }
+
+    var effectToUpdate: Effect? by remember {
         mutableStateOf(null)
     }
 
@@ -109,6 +118,9 @@ fun SadEffectsScreen(
                     }
                 )
             }
+
+            if (updateEffect){
+            }
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(start = 32.dp, end = 32.dp, top = 16.dp),
@@ -138,11 +150,15 @@ fun SadEffectsScreen(
                         EffectsListItem(
                             it.rate,
                             it.description,
-                            date
-                        ) {
-                            effectToDelete = it
-                            deleteEffect = true
-                        }
+                            onLongPress = {
+                                effectToDelete = it
+                                deleteEffect = true
+                            },
+                            onDoubleTap = {
+                                effectToUpdate = it
+                                updateEffect = true
+                            }
+                        )
                     }
                 }
             }

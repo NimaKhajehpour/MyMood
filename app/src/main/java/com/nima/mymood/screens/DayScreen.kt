@@ -1,5 +1,6 @@
 package com.nima.mymood.screens
 
+import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -43,6 +44,18 @@ fun DayScreen (
         mutableStateOf(false)
     }
 
+    var updateEffect by remember {
+        mutableStateOf(false)
+    }
+
+    var effectToUpdate: Effect? by remember {
+        mutableStateOf(null)
+    }
+
+    var showUpdateDay by remember {
+        mutableStateOf(false)
+    }
+
     if (day.value != null){
         Column(
             modifier = Modifier.fillMaxSize(),
@@ -51,6 +64,43 @@ fun DayScreen (
         ) {
 
             if (deleteEffect){
+                AlertDialog(
+                    onDismissRequest = {
+                        deleteEffect = false
+                        effectToDelete = null
+                    },
+                    dismissButton = {
+                        TextButton(onClick = {
+                            deleteEffect = false
+                            effectToDelete = null
+                        }) {
+                            Text(text = "Cancel")
+                        }
+                    },
+                    confirmButton = {
+                        TextButton(onClick = {
+                            viewModel.deleteEffect(effectToDelete!!).invokeOnCompletion {
+                                deleteEffect = false
+                                effectToDelete = null
+                            }
+                        }) {
+                            Text(text = "Confirm")
+                        }
+                    },
+                    icon = {
+                        Icon(imageVector = Icons.Default.Delete, contentDescription = null)
+                    },
+                    text = {
+                        Text(text = "You are about to delete an effect from your day! Remember that effects will not be deleted from your life." +
+                                "\nDo you want to permanently delete this effect?")
+                    },
+                    title = {
+                        Text(text = "Delete Effect?")
+                    }
+                )
+            }
+
+            if (updateEffect){
                 AlertDialog(
                     onDismissRequest = {
                         deleteEffect = false
@@ -175,11 +225,16 @@ fun DayScreen (
                 }){
                     EffectsListItem(
                         it.rate,
-                        it.description
-                    ){
-                        effectToDelete = it
-                        deleteEffect = true
-                    }
+                        it.description,
+                        onLongPress = {
+                            effectToDelete = it
+                            deleteEffect = true
+                        },
+                        onDoubleTap = {
+                            effectToUpdate = it
+                            updateEffect = true
+                        }
+                    )
                 }
             }
         }
