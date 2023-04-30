@@ -82,6 +82,8 @@ fun HomeScreen(
         mutableStateOf(null)
     }
 
+    var newDescription by remember { mutableStateOf("") }
+
     val today = produceState<Day?>(initialValue = null){
         value = viewModel.getDayByDate(year, month, day)
     }.value
@@ -90,7 +92,6 @@ fun HomeScreen(
         mutableStateOf(false)
     }
 
-    var newDescription by remember { mutableStateOf("") }
 
     val datePickerState = rememberDatePickerState()
     datePickerState.displayMode = DisplayMode.Input
@@ -138,12 +139,12 @@ fun HomeScreen(
             )
         }
 
-
         if (updateEffect) {
             AlertDialog(
                 onDismissRequest = {
                     updateEffect = false
                     effectToUpdate = null
+                    newDescription = ""
                 },
                 text = {
                     TextField1(
@@ -158,6 +159,7 @@ fun HomeScreen(
                         viewModel.updateEffect(effectToUpdate!!.copy(description = newDescription)).invokeOnCompletion {
                             updateEffect = false
                             effectToUpdate = null
+                            newDescription = ""
                         }
                     }) {
                         Text(text = "Confirm")

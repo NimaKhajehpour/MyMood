@@ -6,6 +6,7 @@ import com.nima.mymood.model.Day
 import com.nima.mymood.model.Effect
 import com.nima.mymood.repository.MoodRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import java.util.UUID
@@ -21,6 +22,10 @@ class MenuViewModel @Inject constructor(private val repository: MoodRepository)
 
     fun addDay(day: Day) = viewModelScope.launch {
         repository.addDay(day)
+    }
+
+    fun updateEffect(effect: Effect) = viewModelScope.launch(Dispatchers.IO) {
+        repository.updateEffect(effect)
     }
 
     fun addEffect(effect: Effect) = viewModelScope.launch {

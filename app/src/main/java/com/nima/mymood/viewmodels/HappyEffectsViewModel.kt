@@ -22,4 +22,7 @@ class HappyEffectsViewModel @Inject constructor(private val repository: MoodRepo
     }
 
     fun getDayById(id: UUID) = repository.getDayById(id).distinctUntilChanged()
+    fun updateEffect(effect: Effect) = viewModelScope.launch(Dispatchers.IO) {
+        repository.updateEffect(effect)
+    }
 }

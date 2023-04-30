@@ -47,6 +47,8 @@ fun SadEffectsScreen(
         mutableStateOf(false)
     }
 
+    var newDescription by remember { mutableStateOf("") }
+
     var effectToUpdate: Effect? by remember {
         mutableStateOf(null)
     }
@@ -118,49 +120,36 @@ fun SadEffectsScreen(
                     }
                 )
             }
-
-            if (updateEffect){
-            }
-            LazyColumn(
-                modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(start = 32.dp, end = 32.dp, top = 16.dp),
-                verticalArrangement = Arrangement.Top,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                items(items = sadEffects.value, key ={
-                    it.id
-                }) {
-
-                    Column(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ){
-
-                        var date: String? by remember {
-                            mutableStateOf(null)
-                        }
-
-                        LaunchedEffect(key1 = Unit){
-                            viewModel.getDayById(it.foreignKey).collectLatest {
-                                date = "${it.day}/${it.month}/${it.year}"
-                            }
-                        }
-
-                        EffectsListItem(
-                            it.rate,
-                            it.description,
-                            onLongPress = {
-                                effectToDelete = it
-                                deleteEffect = true
-                            },
-                            onDoubleTap = {
-                                effectToUpdate = it
-                                updateEffect = true
+            if (updateEffect) {
+                AlertDialog(
+                    onDismissRequest = {
+                        updateEffect = false
+                        effectToUpdate = null
+                        newDescription = ""
+                    },
+                    text = {
+                        TextField(
+                            value = newDescription,
+                            onValueChange = {
+                                newDescription = it
                             }
                         )
+                    },
+                    confirmButton = {
+                        TextButton(onClick = {
+                            viewModel.updateEffect(effectToUpdate!!.copy(description = newDescription)).invokeOnCompletion {
+                                updateEffect = false
+                                effectToUpdate = null
+                                newDescription = ""
+                            }
+                        }) {
+                            Text(text = "Confirm")
+                        }
+                    },
+                    title = {
+                        Text(text = "Update Effect")
                     }
-                }
+                )
             }
         }
     }

@@ -52,9 +52,8 @@ fun DayScreen (
         mutableStateOf(null)
     }
 
-    var showUpdateDay by remember {
-        mutableStateOf(false)
-    }
+    var newDescription by remember { mutableStateOf("") }
+
 
     if (day.value != null){
         Column(
@@ -100,42 +99,38 @@ fun DayScreen (
                 )
             }
 
-            if (updateEffect){
+            if (updateEffect) {
                 AlertDialog(
                     onDismissRequest = {
-                        deleteEffect = false
-                        effectToDelete = null
+                        updateEffect = false
+                        effectToUpdate = null
+                        newDescription = ""
                     },
-                    dismissButton = {
-                        TextButton(onClick = {
-                            deleteEffect = false
-                            effectToDelete = null
-                        }) {
-                            Text(text = "Cancel")
-                        }
+                    text = {
+                        TextField(
+                            value = newDescription,
+                            onValueChange = {
+                                newDescription = it
+                            }
+                        )
                     },
                     confirmButton = {
                         TextButton(onClick = {
-                            viewModel.deleteEffect(effectToDelete!!).invokeOnCompletion {
-                                deleteEffect = false
-                                effectToDelete = null
+                            viewModel.updateEffect(effectToUpdate!!.copy(description = newDescription)).invokeOnCompletion {
+                                updateEffect = false
+                                effectToUpdate = null
+                                newDescription = ""
                             }
                         }) {
                             Text(text = "Confirm")
                         }
                     },
-                    icon = {
-                        Icon(imageVector = Icons.Default.Delete, contentDescription = null)
-                    },
-                    text = {
-                        Text(text = "You are about to delete an effect from your day! Remember that effects will not be deleted from your life." +
-                                "\nDo you want to permanently delete this effect?")
-                    },
                     title = {
-                        Text(text = "Delete Effect?")
+                        Text(text = "Update Effect")
                     }
                 )
             }
+
 
             if (showDeleteDay){
 

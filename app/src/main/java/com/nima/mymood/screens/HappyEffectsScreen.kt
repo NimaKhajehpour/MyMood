@@ -44,6 +44,9 @@ fun HappyEffectsScreen (
         mutableStateOf(null)
     }
 
+    var newDescription by remember { mutableStateOf("") }
+
+
     if (happyEffects.value.isEmpty()){
         Column(
             modifier = Modifier
@@ -109,8 +112,38 @@ fun HappyEffectsScreen (
                     }
                 )
             }
-            if (updateEffect){
+            if (updateEffect) {
+                AlertDialog(
+                    onDismissRequest = {
+                        updateEffect = false
+                        effectToUpdate = null
+                        newDescription = ""
+                    },
+                    text = {
+                        TextField(
+                            value = newDescription,
+                            onValueChange = {
+                                newDescription = it
+                            }
+                        )
+                    },
+                    confirmButton = {
+                        TextButton(onClick = {
+                            viewModel.updateEffect(effectToUpdate!!.copy(description = newDescription)).invokeOnCompletion {
+                                updateEffect = false
+                                effectToUpdate = null
+                                newDescription = ""
+                            }
+                        }) {
+                            Text(text = "Confirm")
+                        }
+                    },
+                    title = {
+                        Text(text = "Update Effect")
+                    }
+                )
             }
+
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(start = 32.dp, end = 32.dp, top = 16.dp),
