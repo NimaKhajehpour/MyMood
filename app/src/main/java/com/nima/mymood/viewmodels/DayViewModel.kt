@@ -28,4 +28,8 @@ class DayViewModel @Inject constructor(private val repository: MoodRepository)
         viewModelScope.launch {
             repository.deleteDay(day)
         }
+
+    fun updateEffect(effect: Effect) = viewModelScope.launch(Dispatchers.IO) {
+        repository.updateEffect(effect)
+    }
 }

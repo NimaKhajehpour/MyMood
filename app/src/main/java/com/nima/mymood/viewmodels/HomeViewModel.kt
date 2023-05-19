@@ -28,4 +28,7 @@ class HomeViewModel @Inject constructor(
     fun deleteEffect(effect: Effect) = viewModelScope.launch(Dispatchers.IO) {
         repository.deleteEffect(effect)
     }
+    fun updateEffect(effect: Effect) = viewModelScope.launch(Dispatchers.IO) {
+        repository.updateEffect(effect)
+    }
 }

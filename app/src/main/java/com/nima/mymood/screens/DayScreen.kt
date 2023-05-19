@@ -1,5 +1,6 @@
 package com.nima.mymood.screens
 
+import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -42,6 +43,17 @@ fun DayScreen (
     var showDeleteDay by remember {
         mutableStateOf(false)
     }
+
+    var updateEffect by remember {
+        mutableStateOf(false)
+    }
+
+    var effectToUpdate: Effect? by remember {
+        mutableStateOf(null)
+    }
+
+    var newDescription by remember { mutableStateOf("") }
+
 
     if (day.value != null){
         Column(
@@ -86,6 +98,39 @@ fun DayScreen (
                     }
                 )
             }
+
+            if (updateEffect) {
+                AlertDialog(
+                    onDismissRequest = {
+                        updateEffect = false
+                        effectToUpdate = null
+                        newDescription = ""
+                    },
+                    text = {
+                        TextField(
+                            value = newDescription,
+                            onValueChange = {
+                                newDescription = it
+                            }
+                        )
+                    },
+                    confirmButton = {
+                        TextButton(onClick = {
+                            viewModel.updateEffect(effectToUpdate!!.copy(description = newDescription)).invokeOnCompletion {
+                                updateEffect = false
+                                effectToUpdate = null
+                                newDescription = ""
+                            }
+                        }) {
+                            Text(text = "Confirm")
+                        }
+                    },
+                    title = {
+                        Text(text = "Update Effect")
+                    }
+                )
+            }
+
 
             if (showDeleteDay){
 
@@ -175,11 +220,16 @@ fun DayScreen (
                 }){
                     EffectsListItem(
                         it.rate,
-                        it.description
-                    ){
-                        effectToDelete = it
-                        deleteEffect = true
-                    }
+                        it.description,
+                        onLongPress = {
+                            effectToDelete = it
+                            deleteEffect = true
+                        },
+                        onDoubleTap = {
+                            effectToUpdate = it
+                            updateEffect = true
+                        }
+                    )
                 }
             }
         }

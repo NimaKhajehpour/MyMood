@@ -2,6 +2,8 @@ package com.nima.mymood.screens
 
 import android.annotation.SuppressLint
 import android.util.Log
+import android.widget.EditText
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -36,6 +38,7 @@ import com.nima.mymood.viewmodels.HomeViewModel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import java.util.*
+import androidx.compose.material3.TextField as TextField1
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -70,7 +73,17 @@ fun HomeScreen(
     var effectToDelete: Effect? by remember {
         mutableStateOf(null)
     }
-    
+
+    var updateEffect by remember {
+        mutableStateOf(false)
+    }
+
+    var effectToUpdate: Effect? by remember {
+        mutableStateOf(null)
+    }
+
+    var newDescription by remember { mutableStateOf("") }
+
     val today = produceState<Day?>(initialValue = null){
         value = viewModel.getDayByDate(year, month, day)
     }.value
@@ -78,6 +91,7 @@ fun HomeScreen(
     var showDatePicker by remember {
         mutableStateOf(false)
     }
+
 
     val datePickerState = rememberDatePickerState()
     datePickerState.displayMode = DisplayMode.Input
@@ -124,6 +138,39 @@ fun HomeScreen(
                 }
             )
         }
+
+        if (updateEffect) {
+            AlertDialog(
+                onDismissRequest = {
+                    updateEffect = false
+                    effectToUpdate = null
+                    newDescription = ""
+                },
+                text = {
+                    TextField1(
+                        value = newDescription,
+                        onValueChange = {
+                            newDescription = it
+                        }
+                    )
+                },
+                confirmButton = {
+                    TextButton(onClick = {
+                        viewModel.updateEffect(effectToUpdate!!.copy(description = newDescription)).invokeOnCompletion {
+                            updateEffect = false
+                            effectToUpdate = null
+                            newDescription = ""
+                        }
+                    }) {
+                        Text(text = "Confirm")
+                    }
+                },
+                title = {
+                    Text(text = "Update Effect")
+                }
+            )
+        }
+
 
         if (showDatePicker){
             DatePickerDialog(
@@ -306,11 +353,16 @@ fun HomeScreen(
                             }) {
                                 EffectsListItem(
                                     it.rate,
-                                    it.description
-                                ) {
-                                    effectToDelete = it
-                                    deleteEffect = true
-                                }
+                                    it.description,
+                                    onLongPress = {
+                                        effectToDelete = it
+                                        deleteEffect = true
+                                },
+                                    onDoubleTap = {
+                                        effectToUpdate = it
+                                        updateEffect = true
+                                    }
+                            )
                             }
                         }
                     }

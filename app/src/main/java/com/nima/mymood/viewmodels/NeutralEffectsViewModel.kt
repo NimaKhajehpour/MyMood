@@ -24,5 +24,8 @@ class NeutralEffectsViewModel @Inject constructor(private val repository: MoodRe
 
     fun getDayById(id: UUID) = repository.getDayById(id).distinctUntilChanged()
 
+    fun updateEffect(effect: Effect) = viewModelScope.launch(Dispatchers.IO) {
+        repository.updateEffect(effect)
+    }
 
 }

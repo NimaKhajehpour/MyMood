@@ -53,6 +53,15 @@ fun TodayMoodScreen(
         mutableStateOf(null)
     }
 
+    var updateEffect by remember {
+        mutableStateOf(false)
+    }
+
+    var effectToUpdate: Effect? by remember {
+        mutableStateOf(null)
+    }
+
+    var newDescription by remember { mutableStateOf("") }
     val effectsList = viewModel.getDayEffects(UUID.fromString(id!!)).collectAsState(initial = emptyList())
 
     if (day.value != null){
@@ -97,6 +106,38 @@ fun TodayMoodScreen(
                     },
                     title = {
                         Text(text = "Delete Effect?")
+                    }
+                )
+            }
+
+            if (updateEffect) {
+                AlertDialog(
+                    onDismissRequest = {
+                        updateEffect = false
+                        effectToUpdate = null
+                        newDescription = ""
+                    },
+                    text = {
+                        TextField(
+                            value = newDescription,
+                            onValueChange = {
+                                newDescription = it
+                            }
+                        )
+                    },
+                    confirmButton = {
+                        TextButton(onClick = {
+                            viewModel.updateEffect(effectToUpdate!!.copy(description = newDescription)).invokeOnCompletion {
+                                updateEffect = false
+                                effectToUpdate = null
+                                newDescription = ""
+                            }
+                        }) {
+                            Text(text = "Confirm")
+                        }
+                    },
+                    title = {
+                        Text(text = "Update Effect")
                     }
                 )
             }
@@ -299,12 +340,17 @@ fun TodayMoodScreen(
                         horizontalArrangement = Arrangement.Start
                     ) {
                         EffectsListItem(
-                            effectRate = it.rate,
-                            effectDescription = it.description
-                        ){
-                            effectToDelete = it
-                            deleteEffect = true
-                        }
+                            it.rate,
+                            it.description,
+                            onLongPress = {
+                                effectToDelete = it
+                                deleteEffect = true
+                            },
+                            onDoubleTap = {
+                                effectToUpdate = it
+                                updateEffect = true
+                            }
+                        )
                     }
                 }
 

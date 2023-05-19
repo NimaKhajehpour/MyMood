@@ -1,6 +1,7 @@
 package com.nima.mymood.components
 
 import android.util.Log
+import android.view.GestureDetector.OnDoubleTapListener
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
@@ -27,7 +28,8 @@ fun EffectsListItem(
     effectRate: Int = 0,
     effectDescription: String = "",
     effectDate: String? = null,
-    onLongPress: () -> Unit
+    onLongPress: () -> Unit,
+    onDoubleTap: () -> Unit
 ) {
     ElevatedCard(
         shape = RoundedCornerShape(5.dp),
@@ -38,6 +40,9 @@ fun EffectsListItem(
                 detectTapGestures(
                     onLongPress = {
                         onLongPress()
+                    },
+                    onDoubleTap = {
+                        onDoubleTap()
                     }
                 )
             },
@@ -87,7 +92,8 @@ fun EffectsListItem(
             horizontalArrangement = Arrangement.Start
         ){
             Text(
-                text = "Long press to delete.",
+                text = "Long press to delete." +
+                        "\nDouble press to edit",
                 color = Color.Gray,
                 style = MaterialTheme.typography.labelSmall,
                 fontWeight = FontWeight.Light,

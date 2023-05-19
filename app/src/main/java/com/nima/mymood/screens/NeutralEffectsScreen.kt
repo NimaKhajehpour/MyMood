@@ -1,5 +1,6 @@
 package com.nima.mymood.screens
 
+import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -36,6 +37,16 @@ fun NeutralEffectsScreen(
     var effectToDelete: Effect? by remember {
         mutableStateOf(null)
     }
+
+    var updateEffect by remember {
+        mutableStateOf(false)
+    }
+
+    var effectToUpdate: Effect? by remember {
+        mutableStateOf(null)
+    }
+
+    var newDescription by remember { mutableStateOf("") }
 
     if (neutralEffects.value.isEmpty()){
         Column(
@@ -102,6 +113,38 @@ fun NeutralEffectsScreen(
                     }
                 )
             }
+            if (updateEffect) {
+                AlertDialog(
+                    onDismissRequest = {
+                        updateEffect = false
+                        effectToUpdate = null
+                        newDescription = ""
+                    },
+                    text = {
+                        TextField(
+                            value = newDescription,
+                            onValueChange = {
+                                newDescription = it
+                            }
+                        )
+                    },
+                    confirmButton = {
+                        TextButton(onClick = {
+                            viewModel.updateEffect(effectToUpdate!!.copy(description = newDescription)).invokeOnCompletion {
+                                updateEffect = false
+                                effectToUpdate = null
+                                newDescription = ""
+                            }
+                        }) {
+                            Text(text = "Confirm")
+                        }
+                    },
+                    title = {
+                        Text(text = "Update Effect")
+                    }
+                )
+            }
+
 
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
@@ -131,11 +174,15 @@ fun NeutralEffectsScreen(
                         EffectsListItem(
                             it.rate,
                             it.description,
-                            date
-                        ) {
-                            effectToDelete = it
-                            deleteEffect = true
-                        }
+                            onLongPress = {
+                                effectToDelete = it
+                                deleteEffect = true
+                            },
+                            onDoubleTap = {
+                                effectToUpdate = it
+                                updateEffect = true
+                            }
+                        )
                     }
                 }
             }
