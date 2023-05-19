@@ -15,6 +15,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material3.*
@@ -147,12 +148,21 @@ fun HomeScreen(
                     newDescription = ""
                 },
                 text = {
-                    TextField1(
+                    androidx.compose.material3.TextField(
                         value = newDescription,
                         onValueChange = {
                             newDescription = it
                         }
                     )
+                },
+                dismissButton = {
+                    TextButton(onClick = {
+                        updateEffect = false
+                        effectToUpdate = null
+                        newDescription = ""
+                    }) {
+                        Text(text = "Cancel")
+                    }
                 },
                 confirmButton = {
                     TextButton(onClick = {
@@ -165,9 +175,12 @@ fun HomeScreen(
                         Text(text = "Confirm")
                     }
                 },
+                icon = {
+                    Icon(imageVector = Icons.Default.Edit, contentDescription = null)
+                },
                 title = {
                     Text(text = "Update Effect")
-                }
+                },
             )
         }
 

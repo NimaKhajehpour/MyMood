@@ -6,6 +6,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -135,6 +136,15 @@ fun SadEffectsScreen(
                             }
                         )
                     },
+                    dismissButton = {
+                        TextButton(onClick = {
+                            updateEffect = false
+                            effectToUpdate = null
+                            newDescription = ""
+                        }) {
+                            Text(text = "Cancel")
+                        }
+                    },
                     confirmButton = {
                         TextButton(onClick = {
                             viewModel.updateEffect(effectToUpdate!!.copy(description = newDescription)).invokeOnCompletion {
@@ -146,10 +156,53 @@ fun SadEffectsScreen(
                             Text(text = "Confirm")
                         }
                     },
+                    icon = {
+                           Icon(imageVector = Icons.Default.Edit, contentDescription = null)
+                    },
                     title = {
                         Text(text = "Update Effect")
-                    }
+                    },
                 )
+            }
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(start = 32.dp, end = 32.dp, top = 16.dp),
+                verticalArrangement = Arrangement.Top,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                items(items = sadEffects.value, key = {
+                    it.id
+                }) {
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ){
+
+                        var date: String? by remember {
+                            mutableStateOf(null)
+                        }
+
+                        LaunchedEffect(key1 = Unit){
+                            viewModel.getDayById(it.foreignKey).collectLatest {
+                                date = "${it.day}/${it.month}/${it.year}"
+                            }
+                        }
+
+                        EffectsListItem(
+                            it.rate,
+                            it.description,
+                            onLongPress = {
+                                effectToDelete = it
+                                deleteEffect = true
+                            },
+                            onDoubleTap = {
+                                effectToUpdate = it
+                                updateEffect = true
+                            }
+                        )
+                    }
+                }
             }
         }
     }

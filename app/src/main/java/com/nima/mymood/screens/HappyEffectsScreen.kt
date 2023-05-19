@@ -6,6 +6,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -127,6 +128,15 @@ fun HappyEffectsScreen (
                             }
                         )
                     },
+                    dismissButton = {
+                        TextButton(onClick = {
+                            updateEffect = false
+                            effectToUpdate = null
+                            newDescription = ""
+                        }) {
+                            Text(text = "Cancel")
+                        }
+                    },
                     confirmButton = {
                         TextButton(onClick = {
                             viewModel.updateEffect(effectToUpdate!!.copy(description = newDescription)).invokeOnCompletion {
@@ -138,9 +148,12 @@ fun HappyEffectsScreen (
                             Text(text = "Confirm")
                         }
                     },
+                    icon = {
+                        Icon(imageVector = Icons.Default.Edit, contentDescription = null)
+                    },
                     title = {
                         Text(text = "Update Effect")
-                    }
+                    },
                 )
             }
 

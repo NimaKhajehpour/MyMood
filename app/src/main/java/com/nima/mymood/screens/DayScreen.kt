@@ -7,6 +7,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material3.*
@@ -114,6 +115,15 @@ fun DayScreen (
                             }
                         )
                     },
+                    dismissButton = {
+                        TextButton(onClick = {
+                            updateEffect = false
+                            effectToUpdate = null
+                            newDescription = ""
+                        }) {
+                            Text(text = "Cancel")
+                        }
+                    },
                     confirmButton = {
                         TextButton(onClick = {
                             viewModel.updateEffect(effectToUpdate!!.copy(description = newDescription)).invokeOnCompletion {
@@ -125,9 +135,12 @@ fun DayScreen (
                             Text(text = "Confirm")
                         }
                     },
+                    icon = {
+                        Icon(imageVector = Icons.Default.Edit, contentDescription = null)
+                    },
                     title = {
                         Text(text = "Update Effect")
-                    }
+                    },
                 )
             }
 
