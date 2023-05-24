@@ -63,6 +63,10 @@ fun TodayMoodScreen(
     }
 
     var newDescription by remember { mutableStateOf("") }
+    var newRate by remember {
+        mutableStateOf(2)
+    }
+
     val effectsList = viewModel.getDayEffects(UUID.fromString(id!!)).collectAsState(initial = emptyList())
 
     if (day.value != null){
@@ -117,30 +121,128 @@ fun TodayMoodScreen(
                         updateEffect = false
                         effectToUpdate = null
                         newDescription = ""
+                        newRate = 2
                     },
                     text = {
-                        TextField(
-                            value = newDescription,
-                            onValueChange = {
-                                newDescription = it
+                        Column(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ){
+                            TextField(
+                                value = newDescription,
+                                onValueChange = {
+                                    newDescription = it
+                                }
+                            )
+
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 8.dp, horizontal = 12.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceAround
+                            ) {
+                                FilledIconToggleButton(checked = newRate == 0,
+                                    onCheckedChange = {
+                                        newRate = 0
+                                    },
+                                    shape = CircleShape,
+                                    colors = IconButtonDefaults.iconToggleButtonColors(
+                                        checkedContainerColor = animateColorAsState(
+                                            targetValue = if (newRate == 0) Color.LightGray else Color.Transparent
+                                        ).value
+                                    )
+                                ) {
+                                    Icon(painter = painterResource(id = R.drawable.ic_outline_sentiment_very_satisfied_24),
+                                        contentDescription = null,
+                                        tint = very_satisfied
+                                    )
+                                }
+                                FilledIconToggleButton(checked = newRate == 1,
+                                    onCheckedChange = {
+                                        newRate = 1
+                                    },
+                                    shape = CircleShape,
+                                    colors = IconButtonDefaults.iconToggleButtonColors(
+                                        checkedContainerColor = animateColorAsState(
+                                            targetValue = if (newRate == 1) Color.LightGray else Color.Transparent
+                                        ).value
+                                    )
+                                ) {
+                                    Icon(painter = painterResource(id = R.drawable.ic_outline_sentiment_satisfied_alt_24),
+                                        contentDescription = null,
+                                        tint = satisfied
+                                    )
+                                }
+                                FilledIconToggleButton(checked = newRate == 2,
+                                    onCheckedChange = {
+                                        newRate = 2
+                                    },
+                                    shape = CircleShape,
+                                    colors = IconButtonDefaults.iconToggleButtonColors(
+                                        checkedContainerColor = animateColorAsState(
+                                            targetValue = if (newRate == 2) Color.LightGray else Color.Transparent
+                                        ).value
+                                    )
+                                ) {
+                                    Icon(painter = painterResource(id = R.drawable.ic_outline_sentiment_neutral_24),
+                                        contentDescription = null,
+                                        tint = neutral
+                                    )
+                                }
+                                FilledIconToggleButton(checked = newRate == 3,
+                                    onCheckedChange = {
+                                        newRate = 3
+                                    },
+                                    shape = CircleShape,
+                                    colors = IconButtonDefaults.iconToggleButtonColors(
+                                        checkedContainerColor = animateColorAsState(
+                                            targetValue = if (newRate == 3) Color.LightGray else Color.Transparent
+                                        ).value
+                                    )
+                                ) {
+                                    Icon(painter = painterResource(id = R.drawable.ic_outline_sentiment_dissatisfied_24),
+                                        contentDescription = null,
+                                        tint = dissatisfied
+                                    )
+                                }
+                                FilledIconToggleButton(checked = newRate == 4,
+                                    onCheckedChange = {
+                                        newRate = 4
+                                    },
+                                    shape = CircleShape,
+                                    colors = IconButtonDefaults.iconToggleButtonColors(
+                                        checkedContainerColor = animateColorAsState(
+                                            targetValue = if (newRate == 4) Color.LightGray else Color.Transparent
+                                        ).value
+                                    )
+                                ) {
+                                    Icon(painter = painterResource(id = R.drawable.ic_outline_sentiment_very_dissatisfied_24),
+                                        contentDescription = null,
+                                        tint = very_dissatisfied
+                                    )
+                                }
                             }
-                        )
+                        }
                     },
                     dismissButton = {
                         TextButton(onClick = {
                             updateEffect = false
                             effectToUpdate = null
                             newDescription = ""
+                            newRate = 2
                         }) {
                             Text(text = "Cancel")
                         }
                     },
                     confirmButton = {
                         TextButton(onClick = {
-                            viewModel.updateEffect(effectToUpdate!!.copy(description = newDescription)).invokeOnCompletion {
+                            viewModel.updateEffect(effectToUpdate!!.copy(description = newDescription.takeIf { it.isNotBlank() } ?: effectToUpdate!!.description, rate = newRate)).invokeOnCompletion {
                                 updateEffect = false
                                 effectToUpdate = null
                                 newDescription = ""
+                                newRate = 2
                             }
                         }) {
                             Text(text = "Confirm")
