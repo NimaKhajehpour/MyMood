@@ -1,0 +1,4 @@
+Added timestamps for any effect that is added to any day. older effects have the ability to add the timestamps too.
+Added Day rates with custom colors.
+As a reminder because of the changes on the database structure, importing and exporting data is not possible from v2 xml file and has to e done from v3 files.
+suggestion: update the app and then export the data with the latest changes.
