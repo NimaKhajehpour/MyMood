@@ -28,6 +28,8 @@ fun EffectsListItem(
     effectRate: Int = 0,
     effectDescription: String = "",
     effectDate: String? = null,
+    effectHour: String,
+    effectMinute: String,
     onLongPress: () -> Unit,
     onDoubleTap: () -> Unit
 ) {
@@ -48,6 +50,32 @@ fun EffectsListItem(
             },
         elevation = CardDefaults.elevatedCardElevation(15.dp)
     ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Start
+        ) {
+            if (effectHour.isNotBlank() && effectMinute.isNotBlank()){
+                Text(
+                    text = String.format("%02d:%02d", effectHour.toInt(), effectMinute.toInt()),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = Color.Gray,
+                    fontWeight = FontWeight.Light,
+                    modifier = Modifier.padding(end = 5.dp)
+                )
+            }
+
+            if (!effectDate.isNullOrBlank()) {
+                Text(
+                    text = effectDate,
+                    style = MaterialTheme.typography.labelSmall,
+                    color = Color.Gray,
+                    fontWeight = FontWeight.Light
+                )
+            }
+        }
 
         Row(
             modifier = Modifier
@@ -101,14 +129,7 @@ fun EffectsListItem(
 
             Spacer(modifier = Modifier.weight(1f))
 
-            if (!effectDate.isNullOrBlank()) {
-                Text(
-                    text = effectDate,
-                    style = MaterialTheme.typography.labelSmall,
-                    color = Color.Gray,
-                    fontWeight = FontWeight.Light
-                )
-            }
+
         }
     }
 }

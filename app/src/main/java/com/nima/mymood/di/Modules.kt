@@ -5,6 +5,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.nima.mymood.database.MoodDao
 import com.nima.mymood.database.MoodDatabase
+import com.nima.mymood.database.migration1to2
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -27,5 +28,6 @@ object Modules {
             context,
             MoodDatabase::class.java,
             "MoodDatabase"
-        ).fallbackToDestructiveMigration().build()
+        ).fallbackToDestructiveMigration()
+            .addMigrations(migration1to2).build()
 }

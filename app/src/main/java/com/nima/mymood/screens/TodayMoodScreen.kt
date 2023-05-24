@@ -1,5 +1,6 @@
 package com.nima.mymood.screens
 
+import android.util.Log
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -45,6 +46,16 @@ fun TodayMoodScreen(
     var effectRate by remember {
         mutableStateOf(2)
     }
+
+    var effectHour by remember{
+        mutableStateOf("")
+    }
+
+    var effectMinute by remember {
+        mutableStateOf("")
+    }
+
+    val timePickerState = rememberTimePickerState()
 
     var deleteEffect by remember {
         mutableStateOf(false)
@@ -402,10 +413,14 @@ fun TodayMoodScreen(
                                 }
                             }
 
+                            TimeInput(state = timePickerState, modifier = Modifier.padding(top = 8.dp) )
+
                             Button(onClick = {
                                 val effect = Effect(foreignKey = UUID.fromString(id),
                                     description = effectDescription.trim(),
-                                    rate = effectRate
+                                    rate = effectRate,
+                                    hour = timePickerState.hour.toString(),
+                                    minute = timePickerState.minute.toString()
                                 )
                                 effectDescription = ""
                                 effectRate = 2
@@ -457,6 +472,8 @@ fun TodayMoodScreen(
                         EffectsListItem(
                             it.rate,
                             it.description,
+                            effectHour = it.hour,
+                            effectMinute = it.minute,
                             onLongPress = {
                                 effectToDelete = it
                                 deleteEffect = true

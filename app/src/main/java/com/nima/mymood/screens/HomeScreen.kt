@@ -466,6 +466,8 @@ fun HomeScreen(
                                 EffectsListItem(
                                     it.rate,
                                     it.description,
+                                    effectHour = it.hour,
+                                    effectMinute = it.minute,
                                     onLongPress = {
                                         effectToDelete = it
                                         deleteEffect = true

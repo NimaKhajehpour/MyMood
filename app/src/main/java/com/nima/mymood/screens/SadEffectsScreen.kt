@@ -295,6 +295,9 @@ fun SadEffectsScreen(
                         EffectsListItem(
                             it.rate,
                             it.description,
+                            date,
+                            effectHour = it.hour,
+                            effectMinute = it.minute,
                             onLongPress = {
                                 effectToDelete = it
                                 deleteEffect = true

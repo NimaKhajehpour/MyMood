@@ -14,5 +14,9 @@ data class Effect(
     @ColumnInfo
     val description: String,
     @ColumnInfo
-    val rate: Int
+    val rate: Int,
+    @ColumnInfo
+    val hour: String,
+    @ColumnInfo
+    val minute: String
 )

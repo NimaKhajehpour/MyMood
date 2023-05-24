@@ -209,12 +209,16 @@ fun MenuScreen(
                                                     val rate = parser.getAttributeValue("", "rate")
                                                     val eId = parser.getAttributeValue("", "id")
                                                     val fk = parser.getAttributeValue("", "fk")
+                                                    val hour = parser.getAttributeValue("", "hour")
+                                                    val minute = parser.getAttributeValue("", "minute")
                                                     viewModel.addEffect(
                                                         Effect(
                                                             id = UUID.fromString(eId),
                                                             foreignKey = UUID.fromString(fk),
                                                             description = description,
-                                                            rate = rate.toInt()
+                                                            rate = rate.toInt(),
+                                                            hour = hour,
+                                                            minute = minute
                                                         )
                                                     )
                                                 }
@@ -410,6 +414,16 @@ fun MenuScreen(
                                                     "fk",
                                                     "${effect.foreignKey}"
                                                 )
+                                                xmlSerializer.attribute(
+                                                    "",
+                                                    "hour",
+                                                    "${effect.hour}"
+                                                )
+                                                xmlSerializer.attribute(
+                                                    "",
+                                                    "minute",
+                                                    "${effect.minute}"
+                                                )
 
                                                 xmlSerializer.endTag("", "Effect")
                                             }
@@ -502,6 +516,16 @@ fun MenuScreen(
                                             "",
                                             "fk",
                                             "${effect.foreignKey}"
+                                        )
+                                        xmlSerializer.attribute(
+                                            "",
+                                            "hour",
+                                            "${effect.hour}"
+                                        )
+                                        xmlSerializer.attribute(
+                                            "",
+                                            "minute",
+                                            "${effect.minute}"
                                         )
 
                                         xmlSerializer.endTag("", "Effect")
