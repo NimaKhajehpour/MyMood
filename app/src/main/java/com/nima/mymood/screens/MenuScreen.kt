@@ -342,93 +342,188 @@ fun MenuScreen(
                     tint = Color.Black
                 ) {
                     // action export
-                    when (PackageManager.PERMISSION_GRANTED) {
-                        ContextCompat.checkSelfPermission(
-                            context,
-                            Manifest.permission.WRITE_EXTERNAL_STORAGE
-                        ) -> {
-                            // do export
-                            val exportedData = File(
-                                Environment.getExternalStoragePublicDirectory(
-                                    Environment.DIRECTORY_DOWNLOADS
-                                ), "MyMoodExportedV2.xml")
-                            try {
-                                exportedData.createNewFile()
-                            }catch (e: Exception){
-                                e.printStackTrace()
-                            }
-                            var fileOs: FileOutputStream? = null
+                    if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.TIRAMISU){
+                        when (PackageManager.PERMISSION_GRANTED) {
+                            ContextCompat.checkSelfPermission(
+                                context,
+                                Manifest.permission.WRITE_EXTERNAL_STORAGE
+                            ) -> {
+                                // do export
+                                val exportedData = File(
+                                    Environment.getExternalStoragePublicDirectory(
+                                        Environment.DIRECTORY_DOWNLOADS
+                                    ), "MyMoodExportedV2.xml"
+                                )
+                                try {
+                                    exportedData.createNewFile()
+                                } catch (e: Exception) {
+                                    e.printStackTrace()
+                                }
+                                var fileOs: FileOutputStream? = null
 
-                            try{
-                                fileOs = FileOutputStream(exportedData)
-                            }catch (e: Exception){
-                                e.printStackTrace()
-                            }
+                                try {
+                                    fileOs = FileOutputStream(exportedData)
+                                } catch (e: Exception) {
+                                    e.printStackTrace()
+                                }
 
-                            val xmlSerializer = Xml.newSerializer()
+                                val xmlSerializer = Xml.newSerializer()
 
-                            try{
-                                scope.launch{
-                                    showExportDialog = true
-                                    xmlSerializer.setOutput(fileOs, "UTF-8")
-                                    xmlSerializer.startDocument("", true)
-                                    xmlSerializer.startTag("", "MyMood")
-                                    for (day in allDays) {
-                                        xmlSerializer.startTag("", "Day")
-                                        xmlSerializer.attribute("", "day", "${day.day}")
-                                        xmlSerializer.attribute("", "month", "${day.month}")
-                                        xmlSerializer.attribute("", "year", "${day.year}")
-                                        xmlSerializer.attribute("", "id", "${day.id.toString()}")
-                                        val fk = day.id
-                                        allEffects.filter {
-                                            it.foreignKey == fk
-                                        }.forEach { effect ->
-                                            xmlSerializer.startTag("", "Effect")
-                                            xmlSerializer.attribute(
-                                                "",
-                                                "description",
-                                                effect.description
-                                            )
-                                            xmlSerializer.attribute(
-                                                "",
-                                                "rate",
-                                                "${effect.rate}"
-                                            )
+                                try {
+                                    scope.launch {
+                                        showExportDialog = true
+                                        xmlSerializer.setOutput(fileOs, "UTF-8")
+                                        xmlSerializer.startDocument("", true)
+                                        xmlSerializer.startTag("", "MyMood")
+                                        for (day in allDays) {
+                                            xmlSerializer.startTag("", "Day")
+                                            xmlSerializer.attribute("", "day", "${day.day}")
+                                            xmlSerializer.attribute("", "month", "${day.month}")
+                                            xmlSerializer.attribute("", "year", "${day.year}")
                                             xmlSerializer.attribute(
                                                 "",
                                                 "id",
-                                                "${effect.id}"
+                                                "${day.id.toString()}"
                                             )
-                                            xmlSerializer.attribute(
-                                                "",
-                                                "fk",
-                                                "${effect.foreignKey}"
-                                            )
+                                            val fk = day.id
+                                            allEffects.filter {
+                                                it.foreignKey == fk
+                                            }.forEach { effect ->
+                                                xmlSerializer.startTag("", "Effect")
+                                                xmlSerializer.attribute(
+                                                    "",
+                                                    "description",
+                                                    effect.description
+                                                )
+                                                xmlSerializer.attribute(
+                                                    "",
+                                                    "rate",
+                                                    "${effect.rate}"
+                                                )
+                                                xmlSerializer.attribute(
+                                                    "",
+                                                    "id",
+                                                    "${effect.id}"
+                                                )
+                                                xmlSerializer.attribute(
+                                                    "",
+                                                    "fk",
+                                                    "${effect.foreignKey}"
+                                                )
 
-                                            xmlSerializer.endTag("", "Effect")
+                                                xmlSerializer.endTag("", "Effect")
+                                            }
+                                            xmlSerializer.endTag("", "Day")
                                         }
-                                        xmlSerializer.endTag("", "Day")
+                                        xmlSerializer.endTag("", "MyMood")
+                                        xmlSerializer.endDocument()
+                                        xmlSerializer.flush()
+                                        withContext(Dispatchers.IO) {
+                                            fileOs?.close()
+                                        }
+                                        showExportDialog = false
+                                        Toast.makeText(
+                                            context,
+                                            "File \"MyMoodExportedV2.xml\" saved to downloads",
+                                            Toast.LENGTH_LONG
+                                        ).show()
                                     }
-                                    xmlSerializer.endTag("", "MyMood")
-                                    xmlSerializer.endDocument()
-                                    xmlSerializer.flush()
-                                    withContext(Dispatchers.IO){
-                                        fileOs?.close()
-                                    }
+                                } catch (e: Exception) {
+                                    e.printStackTrace()
                                     showExportDialog = false
-                                    Toast.makeText(context, "File \"MyMoodExportedV2.xml\" saved to downloads", Toast.LENGTH_LONG).show()
-                                    }
-                            }catch (e: Exception){
-                                e.printStackTrace()
-                                showExportDialog = false
+                                }
+                            }
+                            else -> {
+                                permissionLauncher.launch(
+                                    arrayOf(
+                                        Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                                    )
+                                )
                             }
                         }
-                        else -> {
-                            permissionLauncher.launch(
-                                arrayOf(
-                                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                                )
-                            )
+                    }else{
+                        val exportedData = File(
+                            Environment.getExternalStoragePublicDirectory(
+                                Environment.DIRECTORY_DOWNLOADS
+                            ), "MyMoodExportedV2.xml"
+                        )
+                        try {
+                            exportedData.createNewFile()
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
+                        var fileOs: FileOutputStream? = null
+
+                        try {
+                            fileOs = FileOutputStream(exportedData)
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
+
+                        val xmlSerializer = Xml.newSerializer()
+
+                        try {
+                            scope.launch {
+                                showExportDialog = true
+                                xmlSerializer.setOutput(fileOs, "UTF-8")
+                                xmlSerializer.startDocument("", true)
+                                xmlSerializer.startTag("", "MyMood")
+                                for (day in allDays) {
+                                    xmlSerializer.startTag("", "Day")
+                                    xmlSerializer.attribute("", "day", "${day.day}")
+                                    xmlSerializer.attribute("", "month", "${day.month}")
+                                    xmlSerializer.attribute("", "year", "${day.year}")
+                                    xmlSerializer.attribute(
+                                        "",
+                                        "id",
+                                        "${day.id.toString()}"
+                                    )
+                                    val fk = day.id
+                                    allEffects.filter {
+                                        it.foreignKey == fk
+                                    }.forEach { effect ->
+                                        xmlSerializer.startTag("", "Effect")
+                                        xmlSerializer.attribute(
+                                            "",
+                                            "description",
+                                            effect.description
+                                        )
+                                        xmlSerializer.attribute(
+                                            "",
+                                            "rate",
+                                            "${effect.rate}"
+                                        )
+                                        xmlSerializer.attribute(
+                                            "",
+                                            "id",
+                                            "${effect.id}"
+                                        )
+                                        xmlSerializer.attribute(
+                                            "",
+                                            "fk",
+                                            "${effect.foreignKey}"
+                                        )
+
+                                        xmlSerializer.endTag("", "Effect")
+                                    }
+                                    xmlSerializer.endTag("", "Day")
+                                }
+                                xmlSerializer.endTag("", "MyMood")
+                                xmlSerializer.endDocument()
+                                xmlSerializer.flush()
+                                withContext(Dispatchers.IO) {
+                                    fileOs?.close()
+                                }
+                                showExportDialog = false
+                                Toast.makeText(
+                                    context,
+                                    "File \"MyMoodExportedV2.xml\" saved to downloads",
+                                    Toast.LENGTH_LONG
+                                ).show()
+                            }
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                            showExportDialog = false
                         }
                     }
                 }
@@ -442,21 +537,26 @@ fun MenuScreen(
                 ) {
                     // Action import
 
-                    when (PackageManager.PERMISSION_GRANTED) {
-                        ContextCompat.checkSelfPermission(
-                            context,
-                            Manifest.permission.READ_EXTERNAL_STORAGE
-                        ) -> {
-                            // do import
-                            showConfirmImport = true
-                        }
-                        else -> {
-                            permissionLauncher.launch(
-                                arrayOf(
-                                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                    if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.TIRAMISU){
+                        when (PackageManager.PERMISSION_GRANTED) {
+                            ContextCompat.checkSelfPermission(
+                                context,
+                                Manifest.permission.READ_EXTERNAL_STORAGE
+                            ) -> {
+                                // do import
+                                showConfirmImport = true
+                            }
+                            else -> {
+                                permissionLauncher.launch(
+                                    arrayOf(
+                                        Manifest.permission.READ_EXTERNAL_STORAGE,
+                                    )
                                 )
-                            )
+                            }
                         }
+                    }
+                    else{
+                        showConfirmImport = true
                     }
                 }
             }
