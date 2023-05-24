@@ -450,7 +450,7 @@ fun MenuScreen(
                                         showExportDialog = false
                                         Toast.makeText(
                                             context,
-                                            "File \"MyMoodExportedV2.xml\" saved to downloads",
+                                            "File \"MyMoodExportedV3.xml\" saved to downloads",
                                             Toast.LENGTH_LONG
                                         ).show()
                                     }
