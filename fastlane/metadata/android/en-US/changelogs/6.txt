@@ -1,0 +1,2 @@
+bug fix for #20 permission problems on android 13 and above for importing and exporting data.
+#16 thanks to Angel Velasquez (@angel-721) for helping add the ability to edit the notes.
