@@ -33,7 +33,13 @@ fun SaveDaysScreen (
                 SavedDayItem(day = it.day,
                     month = it.month,
                     year = it.year,
-                    id = it.id.toString()){ id ->
+                    id = it.id.toString(),
+                    rate = it.rate.toInt(),
+                    red = it.red.toInt(),
+                    green = it.green.toInt(),
+                    blue = it.blue.toInt(),
+                )
+                { id ->
                     // go to day
                     navController.navigate(Screens.DayScreen.name+"/$id")
                 }

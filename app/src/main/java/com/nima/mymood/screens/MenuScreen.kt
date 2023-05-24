@@ -194,12 +194,20 @@ fun MenuScreen(
                                                         parser.getAttributeValue("", "month")
                                                     val year = parser.getAttributeValue("", "year")
                                                     val id = parser.getAttributeValue("", "id")
+                                                    val red = parser.getAttributeValue("", "red")
+                                                    val green = parser.getAttributeValue("", "green")
+                                                    val blue = parser.getAttributeValue("", "blue")
+                                                    val rate = parser.getAttributeValue("", "rate")
                                                     viewModel.addDay(
                                                         Day(
                                                             UUID.fromString(id),
                                                             day.toInt(),
                                                             month.toInt(),
-                                                            year.toInt()
+                                                            year.toInt(),
+                                                            red,
+                                                            green,
+                                                            blue,
+                                                            rate
                                                         )
                                                     )
                                                 }
@@ -384,6 +392,10 @@ fun MenuScreen(
                                             xmlSerializer.attribute("", "day", "${day.day}")
                                             xmlSerializer.attribute("", "month", "${day.month}")
                                             xmlSerializer.attribute("", "year", "${day.year}")
+                                            xmlSerializer.attribute("", "red", "${day.red}")
+                                            xmlSerializer.attribute("", "green", "${day.green}")
+                                            xmlSerializer.attribute("", "blue", "${day.blue}")
+                                            xmlSerializer.attribute("", "rate", "${day.rate}")
                                             xmlSerializer.attribute(
                                                 "",
                                                 "id",
@@ -487,6 +499,10 @@ fun MenuScreen(
                                     xmlSerializer.attribute("", "day", "${day.day}")
                                     xmlSerializer.attribute("", "month", "${day.month}")
                                     xmlSerializer.attribute("", "year", "${day.year}")
+                                    xmlSerializer.attribute("", "red", "${day.red}")
+                                    xmlSerializer.attribute("", "green", "${day.green}")
+                                    xmlSerializer.attribute("", "blue", "${day.blue}")
+                                    xmlSerializer.attribute("", "rate", "${day.rate}")
                                     xmlSerializer.attribute(
                                         "",
                                         "id",

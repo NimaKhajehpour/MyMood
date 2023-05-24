@@ -18,7 +18,9 @@ class TodayMoodViewModel @Inject constructor(private val repository: MoodReposit
 
     suspend fun addEffect(effect: Effect) = repository.addEffect(effect)
 
-    suspend fun updateDay(day: Day) = repository.updateDay(day)
+    fun updateDay(day: Day) = viewModelScope.launch(Dispatchers.IO) {
+        repository.updateDay(day)
+    }
 
     fun updateEffect(effect: Effect) = viewModelScope.launch(Dispatchers.IO) {
         repository.updateEffect(effect)

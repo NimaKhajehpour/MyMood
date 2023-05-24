@@ -18,5 +18,9 @@ val migration1to2 = object:Migration(1,2){
     override fun migrate(database: SupportSQLiteDatabase) {
         database.execSQL("alter table effect add column hour text not null default ''")
         database.execSQL("alter table effect add column minute text not null default ''")
+        database.execSQL("alter table day add column red text not null default ''")
+        database.execSQL("alter table day add column green text not null default ''")
+        database.execSQL("alter table day add column blue text not null default ''")
+        database.execSQL("alter table day add column rate text not null default ''")
     }
 }

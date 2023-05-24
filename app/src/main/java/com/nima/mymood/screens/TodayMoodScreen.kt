@@ -1,6 +1,5 @@
 package com.nima.mymood.screens
 
-import android.util.Log
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -49,14 +48,6 @@ fun TodayMoodScreen(
         mutableStateOf(2)
     }
 
-    var effectHour by remember{
-        mutableStateOf("")
-    }
-
-    var effectMinute by remember {
-        mutableStateOf("")
-    }
-
     val timePickerState = rememberTimePickerState()
 
     var deleteEffect by remember {
@@ -74,6 +65,25 @@ fun TodayMoodScreen(
     var effectToUpdate: Effect? by remember {
         mutableStateOf(null)
     }
+
+    var updateDay by remember {
+        mutableStateOf(false)
+    }
+
+    var dayRate by remember{
+        mutableStateOf(2f)
+    }
+    var dayRed by remember{
+        mutableStateOf(150f)
+    }
+    var dayGreen by remember{
+        mutableStateOf(150f)
+    }
+    var dayBlue by remember{
+        mutableStateOf(150f)
+    }
+
+
 
     var newDescription by remember { mutableStateOf("") }
     var newRate by remember {
@@ -124,6 +134,107 @@ fun TodayMoodScreen(
                     },
                     title = {
                         Text(text = "Delete Effect?")
+                    }
+                )
+            }
+
+            if (updateDay){
+                AlertDialog(
+                    onDismissRequest = {
+                        updateDay = false
+                },
+                    text = {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .verticalScroll(rememberScrollState()),
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Icon(painter = painterResource(id =
+                                when(dayRate.toInt()){
+                                    0 -> R.drawable.ic_outline_sentiment_very_satisfied_24
+                                    1 -> R.drawable.ic_outline_sentiment_satisfied_alt_24
+                                    2 -> R.drawable.ic_outline_sentiment_neutral_24
+                                    3 -> R.drawable.ic_outline_sentiment_dissatisfied_24
+                                    else -> R.drawable.ic_outline_sentiment_very_dissatisfied_24
+                                }
+                            ), contentDescription = null,
+                                modifier = Modifier
+                                    .padding(top = 5.dp, bottom = 10.dp)
+                                    .size(64.dp),
+                                tint = Color(red = dayRed.toInt(), green = dayGreen.toInt(), blue = dayBlue.toInt())
+                            )
+
+                            Text(text = "Rate")
+
+                            Slider(
+                                value = dayRate,
+                                onValueChange = {
+                                    dayRate = it
+                            },
+                                modifier = Modifier.padding(vertical = 5.dp),
+                                valueRange = 0f..4f,
+                                steps = 3
+                            )
+
+                            Text(text = "Red")
+
+                            Slider(
+                                value = dayRed,
+                                onValueChange = {
+                                    dayRed = it
+                                },
+                                modifier = Modifier.padding(vertical = 5.dp),
+                                valueRange = 0f..255f,
+                            )
+
+                            Text(text = "Green")
+
+                            Slider(
+                                value = dayGreen,
+                                onValueChange = {
+                                    dayGreen = it
+                                },
+                                modifier = Modifier.padding(vertical = 5.dp),
+                                valueRange = 0f..255f,
+                            )
+
+                            Text(text = "Blue")
+
+                            Slider(
+                                value = dayBlue,
+                                onValueChange = {
+                                    dayBlue = it
+                                },
+                                modifier = Modifier.padding(vertical = 5.dp),
+                                valueRange = 0f..255f,
+                            )
+                        }
+                    },
+                    title = {
+                        Text(text = "Update Day Rate")
+                    },
+                    dismissButton = {
+                        TextButton(onClick = {
+                            updateDay = false
+                        }) {
+                            Text(text = "Cancel")
+                        }
+                    },
+                    confirmButton = {
+                        TextButton(onClick = {
+                            viewModel.updateDay(day.value!!.copy(
+                                rate = dayRate.toInt().toString(),
+                                red = dayRed.toInt().toString(),
+                                green = dayGreen.toInt().toString(),
+                                blue = dayBlue.toInt().toString(),
+                            ),
+                            )
+                            updateDay = false
+                        }) {
+                            Text(text = "Confirm")
+                        }
                     }
                 )
             }
@@ -277,6 +388,53 @@ fun TodayMoodScreen(
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.CenterHorizontally
             ){
+                item {
+                    if (day.value!!.rate.isNotBlank()){
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 8.dp),
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Icon(painter = painterResource(id =
+                                when(day.value!!.rate.toInt()){
+                                    0 -> R.drawable.ic_outline_sentiment_very_satisfied_24
+                                    1 -> R.drawable.ic_outline_sentiment_satisfied_alt_24
+                                    2 -> R.drawable.ic_outline_sentiment_neutral_24
+                                    3 -> R.drawable.ic_outline_sentiment_dissatisfied_24
+                                    else -> R.drawable.ic_outline_sentiment_very_dissatisfied_24
+                                }
+                            ),
+                                contentDescription = null,
+                                tint = Color(
+                                    red = day.value!!.red.toInt(),
+                                    green = day.value!!.green.toInt(),
+                                    blue = day.value!!.blue.toInt(),
+                                ),
+                                modifier = Modifier
+                                    .size(120.dp)
+                                    .padding(bottom = 8.dp)
+                            )
+
+                            Button(onClick = {
+                                updateDay = true
+                            }) {
+                                Text("Edit Day Overall Rate")
+                            }
+                        }
+
+                    }else{
+                        Button(onClick = {
+                            updateDay = true
+                        },
+                            modifier = Modifier.padding(top = 8.dp)
+                        ) {
+                            Text(text = "Select an Overall Mood")
+                        }
+                    }
+                }
+
                 item {
                     Text(text = "${Calculate.calculateMonthName(day.value!!.month)} " +
                             "${day.value!!.day} ${day.value!!.year}",

@@ -15,4 +15,12 @@ data class Day(
     var month: Int,
     @ColumnInfo
     var year: Int,
+    @ColumnInfo
+    var red: String,
+    @ColumnInfo
+    var green: String,
+    @ColumnInfo
+    var blue: String,
+    @ColumnInfo
+    var rate: String,
 )

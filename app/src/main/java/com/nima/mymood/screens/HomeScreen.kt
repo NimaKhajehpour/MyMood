@@ -307,7 +307,7 @@ fun HomeScreen(
                             selectedDate = viewModel.getDayByDate(selectedYear, selectedMonth, selectedDay)
                         }.invokeOnCompletion {
                             if (selectedDate == null){
-                                val tempDay = Day(day = selectedDay, month = selectedMonth, year = selectedYear)
+                                val tempDay = Day(day = selectedDay, month = selectedMonth, year = selectedYear, red = "", green =  "", blue = "", rate = "")
                                 scope.launch {
                                     viewModel.addDay(tempDay)
                                 }.invokeOnCompletion {
@@ -411,6 +411,10 @@ fun HomeScreen(
                             day = day,
                             month = month,
                             year = year,
+                            red = "",
+                            green =  "",
+                            blue = "",
+                            rate = ""
                         )
                         runBlocking {
                             launch {
