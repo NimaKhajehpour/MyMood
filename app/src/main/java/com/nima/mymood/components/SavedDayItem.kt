@@ -39,18 +39,22 @@ fun SavedDayItem(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Start,
         ) {
-            Icon(painter = painterResource(id =
-                when(rate){
-                    0 -> R.drawable.ic_outline_sentiment_very_satisfied_24
-                    1 -> R.drawable.ic_outline_sentiment_satisfied_alt_24
-                    2 -> R.drawable.ic_outline_sentiment_neutral_24
-                    3 -> R.drawable.ic_outline_sentiment_dissatisfied_24
-                    else -> R.drawable.ic_outline_sentiment_very_dissatisfied_24
-                }
-            ), contentDescription = null,
-                tint = Color(red = red, green = green, blue = blue),
-                modifier = Modifier.padding(end = 5.dp)
-            )
+            if (rate != -1){
+                Icon(
+                    painter = painterResource(
+                        id =
+                        when (rate) {
+                            0 -> R.drawable.ic_outline_sentiment_very_satisfied_24
+                            1 -> R.drawable.ic_outline_sentiment_satisfied_alt_24
+                            2 -> R.drawable.ic_outline_sentiment_neutral_24
+                            3 -> R.drawable.ic_outline_sentiment_dissatisfied_24
+                            else -> R.drawable.ic_outline_sentiment_very_dissatisfied_24
+                        }
+                    ), contentDescription = null,
+                    tint = Color(red = red, green = green, blue = blue),
+                    modifier = Modifier.padding(end = 5.dp)
+                )
+            }
 
             Text(text = "${Calculate.calculateMonthName(month)} " +
                     "$day $year",

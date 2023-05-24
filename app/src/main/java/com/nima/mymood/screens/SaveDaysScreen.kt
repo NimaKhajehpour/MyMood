@@ -34,10 +34,10 @@ fun SaveDaysScreen (
                     month = it.month,
                     year = it.year,
                     id = it.id.toString(),
-                    rate = it.rate.toInt(),
-                    red = it.red.toInt(),
-                    green = it.green.toInt(),
-                    blue = it.blue.toInt(),
+                    rate = it.rate.takeIf {rate -> rate.isNotBlank() }?.toInt() ?: -1,
+                    red = it.red.takeIf {red -> red.isNotBlank() }?.toInt() ?: -1,
+                    green = it.green.takeIf {green -> green.isNotBlank() }?.toInt() ?: -1,
+                    blue = it.blue.takeIf {blue -> blue.isNotBlank() }?.toInt() ?: -1,
                 )
                 { id ->
                     // go to day
