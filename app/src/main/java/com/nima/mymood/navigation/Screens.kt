@@ -8,5 +8,6 @@ enum class Screens {
     NeutralEffects,
     SadEffects,
     SavedDays,
-    DayScreen
+    DayScreen,
+    AboutScreen
 }

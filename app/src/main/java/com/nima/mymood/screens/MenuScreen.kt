@@ -21,6 +21,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Search
@@ -275,6 +276,17 @@ fun MenuScreen(
             ) {
                 Icon(imageVector = Icons.Outlined.Home, contentDescription = null)
             }
+            Spacer(modifier = Modifier.weight(1f))
+
+            FilledIconButton(onClick = {
+                navController.navigate(Screens.AboutScreen.name)
+            },
+                shape = CircleShape,
+                modifier = Modifier.padding(16.dp)
+            ) {
+                Icon(imageVector = Icons.Default.Info, contentDescription = null)
+            }
+
             Spacer(modifier = Modifier.weight(1f))
 
             FilledIconButton(

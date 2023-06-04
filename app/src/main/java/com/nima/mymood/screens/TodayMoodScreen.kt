@@ -467,7 +467,7 @@ fun TodayMoodScreen(
                                 horizontalArrangement = Arrangement.Start
                             ) {
                                 Text(
-                                    text = "What effected your mood today?",
+                                    text = "What affected your mood today?",
                                     style = MaterialTheme.typography.bodyMedium,
                                     fontWeight = FontWeight.Light
                                 )

@@ -58,5 +58,9 @@ fun MoodNavigation() {
                 id = it.arguments?.getString("id")
             )
         }
+
+        composable(Screens.AboutScreen.name){
+            AboutScreen(navController = navController)
+        }
     }
 }
