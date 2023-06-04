@@ -10,3 +10,10 @@ You can add events that effected your mood today, see all the events by their ef
      height="80">](https://f-droid.org/packages/com.nima.mymood/)
 
 Or get the latest APK from the [Releases Section](https://github.com/NimaKhajehpour/MyMood/releases/latest).
+
+## Donate Crypto to the Creator
+
+![IMG_20230604_180149_164 2](https://github.com/NimaKhajehpour/MyMood/assets/123193175/b268f409-fb20-4f28-bf4f-3ece332d438b)
+![IMG_20230604_180101 1](https://github.com/NimaKhajehpour/MyMood/assets/123193175/b39654a9-35d0-4390-ac8b-4e1a2d9bf622)
+![IMG_20230604_180045 1](https://github.com/NimaKhajehpour/MyMood/assets/123193175/de8be4ed-851a-4f7b-bf07-55cf453ae455)
+
