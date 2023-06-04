@@ -352,36 +352,38 @@ fun HomeScreen(
             }
         }
 
-        CenterAlignedTopAppBar(
-            title = {
-                TextButton(
-                    onClick = {
-                        showDatePicker = true
-                    },
-                    border = BorderStroke(2.dp, MaterialTheme.colorScheme.tertiaryContainer),
-                    colors = ButtonDefaults.textButtonColors(
-                        contentColor = MaterialTheme.colorScheme.secondary
-                    )
-                ){
-                    Text(
-                        text = "${Calculate.calculateDayName(dayOfWeek)} " +
-                                "${Calculate.calculateMonthName(month)} " +
-                                "$day $year",
-                        style = MaterialTheme.typography.bodyLarge,
-                    )
-                }
-            },
-            actions = {
-                FilledIconButton(onClick = {
-                    // go to moods menu
-                    navController.navigate(Screens.MenuScreen.name)
+        Box(
+            modifier = Modifier.fillMaxWidth()
+                .padding(8.dp),
+        ) {
+            TextButton(
+                onClick = {
+                    showDatePicker = true
                 },
-                    modifier = Modifier.padding(end = 12.dp)
-                ) {
-                    Icon(imageVector = Icons.Default.ArrowForward, contentDescription = null)
-                }
+                border = BorderStroke(2.dp, MaterialTheme.colorScheme.tertiaryContainer),
+                colors = ButtonDefaults.textButtonColors(
+                    contentColor = MaterialTheme.colorScheme.secondary
+                ),
+                modifier = Modifier.align(Alignment.Center)
+            ){
+                Text(
+                    text = "${Calculate.calculateDayName(dayOfWeek)} " +
+                            "${Calculate.calculateMonthName(month)} " +
+                            "$day $year",
+                    style = MaterialTheme.typography.bodyLarge,
+                )
             }
-        )
+
+            FilledIconButton(onClick = {
+                // go to moods menu
+                navController.navigate(Screens.MenuScreen.name)
+            },
+                modifier = Modifier.padding(end = 12.dp)
+                    .align(Alignment.CenterEnd)
+            ) {
+                Icon(imageVector = Icons.Default.ArrowForward, contentDescription = null)
+            }
+        }
         when (today) {
             null -> {
                 Column(
