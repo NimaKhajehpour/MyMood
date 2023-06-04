@@ -352,7 +352,7 @@ fun MenuScreen(
                 MenuItems(icon = Icons.Outlined.Search,
                     icon2 = null,
                     title = "Saved Days",
-                    tint = Color.Black
+                    tint = MaterialTheme.colorScheme.tertiary
                 ) {
                     // go search
                     navController.navigate(Screens.SavedDays.name)
@@ -363,7 +363,7 @@ fun MenuScreen(
                 MenuItems(icon = null,
                     icon2 = R.drawable.ic_baseline_arrow_upward_24,
                     title = "Export Data",
-                    tint = Color.Black
+                    tint = MaterialTheme.colorScheme.tertiary
                 ) {
                     // action export
                     if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.TIRAMISU){
@@ -585,7 +585,7 @@ fun MenuScreen(
                 MenuItems(icon = null,
                     icon2 = R.drawable.ic_baseline_arrow_downward_24,
                     title = "Import Data",
-                    tint = Color.Black
+                    tint = MaterialTheme.colorScheme.tertiary
                 ) {
                     // Action import
 
