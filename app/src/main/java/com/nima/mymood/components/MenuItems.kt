@@ -1,5 +1,6 @@
 package com.nima.mymood.components
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -27,43 +28,45 @@ fun MenuItems (
     onClick: () -> Unit
 ){
 
-    OutlinedButton(onClick = {
-        onClick()
-    },
-        shape = CircleShape,
-        contentPadding = PaddingValues(15.dp),
-        modifier = Modifier.padding(15.dp)
-    ){
-        Column(
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(15.dp),
+        verticalArrangement = Arrangement.Top,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        OutlinedButton(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp),
-            verticalArrangement = Arrangement.Top,
-            horizontalAlignment = Alignment.CenterHorizontally
+                .padding(bottom = 16.dp),
+            shape = CircleShape,
+            onClick = {
+                onClick()
+            },
+            contentPadding = PaddingValues(15.dp),
+            border = BorderStroke(width = 2.dp, color = MaterialTheme.colorScheme.secondaryContainer)
         ) {
             if (icon != null) {
                 Icon(
                     imageVector = icon, contentDescription = null,
                     modifier = Modifier
-                        .size(56.dp)
-                        .padding(bottom = 16.dp),
+                        .size(56.dp),
                     tint = tint
                 )
             } else {
                 Icon(
                     painter = painterResource(id = icon2!!), contentDescription = null,
                     modifier = Modifier
-                        .size(56.dp)
-                        .padding(bottom = 16.dp),
+                        .size(56.dp),
                     tint = tint
                 )
             }
-            Text(
-                text = title,
-                style = MaterialTheme.typography.labelSmall,
-                fontWeight = FontWeight.Light
-            )
         }
+        Text(
+            text = title,
+            style = MaterialTheme.typography.labelSmall,
+            fontWeight = FontWeight.Light,
+            color = MaterialTheme.colorScheme.secondary
+        )
     }
 
 }

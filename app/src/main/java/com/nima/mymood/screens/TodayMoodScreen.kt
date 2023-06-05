@@ -1,5 +1,6 @@
 package com.nima.mymood.screens
 
+import android.widget.Toast
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -16,7 +17,10 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -39,6 +43,10 @@ fun TodayMoodScreen(
 ) {
 
     val day = viewModel.getDayById(UUID.fromString(id)).collectAsState(initial = null)
+
+    val context = LocalContext.current
+
+    val clipboard = LocalClipboardManager.current
 
     var effectDescription by remember {
         mutableStateOf("")
@@ -643,6 +651,10 @@ fun TodayMoodScreen(
                             onDoubleTap = {
                                 effectToUpdate = it
                                 updateEffect = true
+                            },
+                            onCopyClicked = {
+                                clipboard.setText(AnnotatedString(it.description))
+                                Toast.makeText(context, "Description Copied!", Toast.LENGTH_LONG).show()
                             }
                         )
                     }

@@ -26,7 +26,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.LocalPinnableContainer
+import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -54,6 +58,8 @@ fun HomeScreen(
     val calendar = Calendar.getInstance()
 
     val scope = rememberCoroutineScope()
+
+    val context = LocalContext.current
 
     val year by remember {
         mutableStateOf(calendar.get(Calendar.YEAR))
@@ -97,6 +103,7 @@ fun HomeScreen(
         mutableStateOf(false)
     }
 
+    val clipboard = LocalClipboardManager.current
 
     val datePickerState = rememberDatePickerState()
     datePickerState.displayMode = DisplayMode.Input
@@ -353,7 +360,8 @@ fun HomeScreen(
         }
 
         Box(
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
                 .padding(8.dp),
         ) {
             TextButton(
@@ -378,7 +386,8 @@ fun HomeScreen(
                 // go to moods menu
                 navController.navigate(Screens.MenuScreen.name)
             },
-                modifier = Modifier.padding(end = 12.dp)
+                modifier = Modifier
+                    .padding(end = 12.dp)
                     .align(Alignment.CenterEnd)
             ) {
                 Icon(imageVector = Icons.Default.ArrowForward, contentDescription = null)
@@ -483,6 +492,10 @@ fun HomeScreen(
                                     onDoubleTap = {
                                         effectToUpdate = it
                                         updateEffect = true
+                                    },
+                                    onCopyClicked = {
+                                        clipboard.setText(AnnotatedString(it.description))
+                                        Toast.makeText(context, "Description Copied!", Toast.LENGTH_LONG).show()
                                     }
                             )
                             }

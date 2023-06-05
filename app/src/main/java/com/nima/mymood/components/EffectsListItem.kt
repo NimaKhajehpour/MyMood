@@ -1,20 +1,14 @@
 package com.nima.mymood.components
 
-import android.util.Log
-import android.view.GestureDetector.OnDoubleTapListener
-import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.gestures.detectVerticalDragGestures
-import androidx.compose.foundation.gestures.draggable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.ripple.rememberRipple
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
@@ -31,7 +25,8 @@ fun EffectsListItem(
     effectHour: String,
     effectMinute: String,
     onLongPress: () -> Unit,
-    onDoubleTap: () -> Unit
+    onDoubleTap: () -> Unit,
+    onCopyClicked: () -> Unit
 ) {
     ElevatedCard(
         shape = RoundedCornerShape(5.dp),
@@ -53,8 +48,8 @@ fun EffectsListItem(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(8.dp),
-            verticalAlignment = Alignment.CenterVertically,
+                .padding(4.dp),
+            verticalAlignment = Alignment.Top,
             horizontalArrangement = Arrangement.Start
         ) {
             if (effectHour.isNotBlank() && effectMinute.isNotBlank()){
@@ -73,6 +68,19 @@ fun EffectsListItem(
                     style = MaterialTheme.typography.labelSmall,
                     color = Color.Gray,
                     fontWeight = FontWeight.Light
+                )
+            }
+            
+            Spacer(modifier = Modifier.weight(1f))
+            
+            IconButton(onClick = { 
+                onCopyClicked()
+            },
+                modifier = Modifier.size(24.dp)
+            ) {
+                Icon(painter = painterResource(id = R.drawable.ic_baseline_content_copy_24),
+                    contentDescription = null,
+                    Modifier.size(15.dp)
                 )
             }
         }
@@ -103,7 +111,6 @@ fun EffectsListItem(
                     else -> very_dissatisfied
                 }
             )
-
             Text(text = effectDescription,
                 style = MaterialTheme.typography.labelMedium,
                 fontWeight = FontWeight.Light,
@@ -126,10 +133,7 @@ fun EffectsListItem(
                 style = MaterialTheme.typography.labelSmall,
                 fontWeight = FontWeight.Light,
             )
-
-            Spacer(modifier = Modifier.weight(1f))
-
-
+            
         }
     }
 }
