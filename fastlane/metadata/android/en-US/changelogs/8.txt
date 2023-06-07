@@ -1,0 +1,4 @@
+- Added About section and updated some Uon screens to look better #27
+- Fixed a typo on one screen #25
+- Added the ability to copy effect text on every effect card #29
+- added statistics with Graph for days #22
