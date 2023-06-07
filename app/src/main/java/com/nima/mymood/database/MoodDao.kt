@@ -20,7 +20,7 @@ interface MoodDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun addEffect(effect: Effect)
 
-    @Query("select * from effect where foreignKey = :fk")
+    @Query("select * from effect where foreignKey = :fk order by hour asc, minute asc;")
     fun getEffectsByFK(fk: UUID): Flow<List<Effect>>
 
     @Query("select * from effect where rate in (:rate) order by rate asc")

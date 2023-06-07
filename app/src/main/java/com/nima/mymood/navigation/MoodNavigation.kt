@@ -62,5 +62,16 @@ fun MoodNavigation() {
         composable(Screens.AboutScreen.name){
             AboutScreen(navController = navController)
         }
+
+        composable(Screens.DayGraphScreen.name+"/{id}",
+            arguments = listOf(
+                navArgument(name = "id"){type = NavType.StringType}
+            )
+        ){
+            DayGraphScreen(navController = navController,
+                id = it.arguments?.getString("id"),
+                hiltViewModel()
+            )
+        }
     }
 }

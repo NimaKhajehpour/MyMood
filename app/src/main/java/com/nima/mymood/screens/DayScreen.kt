@@ -325,6 +325,18 @@ fun DayScreen (
                     ) {
                         Icon(imageVector = Icons.Outlined.Delete, contentDescription = null)
                     }
+                }else{
+                    ElevatedButton(
+                        onClick = {
+                            // go to edit
+                            navController.navigate(Screens.DayGraphScreen.name + "/${id!!}")
+                        },
+                        shape = RoundedCornerShape(5.dp),
+                        elevation = ButtonDefaults.elevatedButtonElevation(15.dp)
+                    ) {
+                        Icon(painter = painterResource(id = R.drawable.ic_baseline_ssid_chart_24),
+                            contentDescription = null)
+                    }
                 }
 
                 Spacer(modifier = Modifier.weight(1f))
