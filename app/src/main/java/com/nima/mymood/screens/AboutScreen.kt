@@ -40,12 +40,6 @@ fun AboutScreen(
 
     val context = LocalContext.current as Activity
 
-    val clipboard = LocalClipboardManager.current
-
-    val snackBarHost = remember {SnackbarHostState()}
-
-    val scope = rememberCoroutineScope()
-
     Box{
         Column(
             modifier = Modifier
@@ -102,6 +96,7 @@ fun AboutScreen(
                     containerColor = MaterialTheme.colorScheme.tertiaryContainer
                 ),
                 modifier = Modifier.padding(vertical = 8.dp, horizontal = 32.dp)
+                    .fillMaxWidth()
             ) {
                 Image(
                     painter = painterResource(id = R.drawable.github_mark),
@@ -127,6 +122,7 @@ fun AboutScreen(
                     containerColor = MaterialTheme.colorScheme.tertiaryContainer
                 ),
                 modifier = Modifier.padding(vertical = 8.dp, horizontal = 32.dp)
+                    .fillMaxWidth()
             ) {
                 Image(
                     painter = painterResource(id = R.drawable.github_mark),
@@ -149,6 +145,7 @@ fun AboutScreen(
                 },
                 shape = RoundedCornerShape(5.dp),
                 modifier = Modifier.padding(vertical = 8.dp, horizontal = 32.dp)
+                    .fillMaxWidth()
             ) {
                 Image(
                     painter = painterResource(id = R.drawable.ic_baseline_bug_report_24),
@@ -160,101 +157,6 @@ fun AboutScreen(
 
                 Text(text = "Report a bug/Request features")
             }
-
-            Divider(thickness = 3.dp, modifier = Modifier.padding(top = 8.dp, start = 32.dp, end= 32.dp))
-
-            Text(
-                text = "Consider Donating?",
-                style = MaterialTheme.typography.bodyLarge,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(vertical = 8.dp, horizontal = 32.dp)
-            )
-
-            OutlinedButton(
-                onClick = {
-                    scope.launch {
-                        snackBarHost.showSnackbar(
-                            message = "Coming Soon!",
-                            withDismissAction = true,
-                            duration = SnackbarDuration.Long,
-                            actionLabel = null
-                        )
-                    }
-                },
-                shape = RoundedCornerShape(5.dp),
-                modifier = Modifier.padding(vertical = 8.dp, horizontal = 32.dp)
-            ) {
-                Text(text = "PayPal Coming Soon!")
-            }
-
-            OutlinedButton(
-                onClick = {
-                    clipboard.setText(AnnotatedString(Constants.eth_address))
-                    scope.launch {
-                        snackBarHost.showSnackbar(
-                            message = "Address Copied",
-                            withDismissAction = true,
-                            duration = SnackbarDuration.Long,
-                            actionLabel = null
-                        )
-                    }
-                },
-                shape = RoundedCornerShape(5.dp),
-                modifier = Modifier.padding(vertical = 8.dp, horizontal = 32.dp)
-            ) {
-                Text(text = "Copy Etherium Address")
-            }
-
-            OutlinedButton(
-                onClick = {
-                    clipboard.setText(AnnotatedString(Constants.btc_address))
-                    scope.launch {
-                        snackBarHost.showSnackbar(
-                            message = "Address Copied",
-                            withDismissAction = true,
-                            duration = SnackbarDuration.Long,
-                            actionLabel = null
-                        )
-                    }
-                },
-                shape = RoundedCornerShape(5.dp),
-                modifier = Modifier.padding(vertical = 8.dp, horizontal = 32.dp)
-            ) {
-                Text(text = "Copy Btc (Coin) Address")
-            }
-
-            OutlinedButton(
-                onClick = {
-                    clipboard.setText(AnnotatedString(Constants.usdt_address))
-                    scope.launch {
-                        snackBarHost.showSnackbar(
-                            message = "Address Copied",
-                            withDismissAction = true,
-                            duration = SnackbarDuration.Long,
-                            actionLabel = null
-                        )
-                    }
-                },
-                shape = RoundedCornerShape(5.dp),
-                modifier = Modifier.padding(top = 8.dp, start = 32.dp, end = 32.dp)
-            ) {
-                Text(text = "Copy Tether (USDT) Address")
-            }
-
-        }
-        SnackbarHost(
-            hostState = snackBarHost,
-            modifier = Modifier.fillMaxWidth()
-                .align(Alignment.BottomCenter)
-        ) {
-            Snackbar(
-                snackbarData = it,
-                actionOnNewLine = false,
-                shape = RoundedCornerShape(10.dp),
-                containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
-                dismissActionContentColor = MaterialTheme.colorScheme.tertiary
-            )
         }
     }
 }

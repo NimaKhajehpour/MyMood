@@ -73,5 +73,11 @@ fun MoodNavigation() {
                 hiltViewModel()
             )
         }
+
+        composable(Screens.DonateScreen.name){
+            DonateScreen(
+                navController = navController
+            )
+        }
     }
 }

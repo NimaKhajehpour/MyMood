@@ -23,6 +23,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.*
@@ -265,7 +266,7 @@ fun MenuScreen(
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Start
+            horizontalArrangement = Arrangement.SpaceEvenly
         ){
             FilledIconButton(
                 onClick = {
@@ -276,7 +277,17 @@ fun MenuScreen(
             ) {
                 Icon(imageVector = Icons.Outlined.Home, contentDescription = null)
             }
-            Spacer(modifier = Modifier.weight(1f))
+
+            FilledIconButton(
+                onClick = {
+                          // go to donate page
+                          navController.navigate(Screens.DonateScreen.name)
+                },
+                shape = CircleShape,
+                modifier = Modifier.padding(16.dp)
+            ) {
+                Icon(imageVector = Icons.Outlined.Favorite, contentDescription = null)
+            }
 
             FilledIconButton(onClick = {
                 navController.navigate(Screens.AboutScreen.name)
@@ -287,7 +298,6 @@ fun MenuScreen(
                 Icon(imageVector = Icons.Default.Info, contentDescription = null)
             }
 
-            Spacer(modifier = Modifier.weight(1f))
 
             FilledIconButton(
                 onClick = {
