@@ -162,24 +162,46 @@ fun DayGraphScreen(
                         Text("Copy Description")
                     }
                 }
-                
-                Calculate.calculateIconWithRate(rate = effect.rate, size = 64.dp)
 
-                SelectionContainer {
-                    Text(text = effect.description,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.tertiary,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp)
-                    )
+                ElevatedCard(
+                    shape = RoundedCornerShape(15.dp),
+                    modifier = Modifier.fillMaxWidth()
+                        .padding(vertical = 8.dp, horizontal = 32.dp)
+                ){
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp),
+                        verticalArrangement = Arrangement.Top,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Calculate.calculateIconWithRate(rate = effect.rate, size = 64.dp)
+
+                        SelectionContainer {
+                            Text(
+                                text = effect.description,
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.tertiary,
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp)
+                            )
+                        }
+
+                        Text(
+                            text = "Time: ${
+                                String.format(
+                                    "%02d:%02d",
+                                    effect.hour.toInt(),
+                                    effect.minute.toInt()
+                                )
+                            }",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.tertiary,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp)
+                        )
+                    }
                 }
-
-                Text(text = "Time: ${String.format("%02d:%02d", effect.hour.toInt(), effect.minute.toInt())}",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.tertiary,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp)
-                )
             }
         }
     }
