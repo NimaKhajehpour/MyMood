@@ -20,6 +20,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.text.isDigitsOnly
 import androidx.navigation.NavController
 import com.nima.mymood.R
 import com.nima.mymood.graph.DataPoint
@@ -95,9 +96,9 @@ fun DayGraphScreen(
                     content = {min, offset, _ ->
                         for (step in 0 until effects.value.size){
                             val value = step * offset + min
-                            Text(text = String
+                            Text(text = if (effects.value[value.toInt()-1].hour.isNotBlank()) String
                                 .format("%02d:\n%02d", effects.value[value.toInt()-1].hour.toInt(),
-                                    effects.value[value.toInt()-1].minute.toInt()),
+                                    effects.value[value.toInt()-1].minute.toInt()) else "No\nTime",
                                 fontWeight = FontWeight.Light,
                                 fontSize = MaterialTheme.typography.labelSmall.fontSize,
                                 lineHeight = 12.sp,
