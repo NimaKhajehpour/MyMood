@@ -56,4 +56,7 @@ class MoodRepository @Inject constructor(private val dao: MoodDao) {
 
     suspend fun deleteEffect(effect: Effect) =
         dao.deleteEffect(effect)
+
+    fun getEffectById(id: UUID): Flow<Effect> =
+        dao.getEffectById(id).flowOn(Dispatchers.IO).conflate()
 }

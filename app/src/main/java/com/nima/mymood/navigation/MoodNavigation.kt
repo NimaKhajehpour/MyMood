@@ -79,5 +79,13 @@ fun MoodNavigation() {
                 navController = navController
             )
         }
+
+        composable(Screens.EditScreen.name+"/{id}",
+            arguments = listOf(
+                navArgument(name = "id"){type = NavType.StringType}
+            )
+        ){
+            EditScreen(navController = navController, id = it.arguments?.getString("id"), viewModel = hiltViewModel())
+        }
     }
 }

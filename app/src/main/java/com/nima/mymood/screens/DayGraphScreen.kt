@@ -3,12 +3,14 @@ package com.nima.mymood.screens
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -26,6 +28,7 @@ import com.nima.mymood.R
 import com.nima.mymood.graph.DataPoint
 import com.nima.mymood.graph.GraphLine
 import com.nima.mymood.graph.LineGraph
+import com.nima.mymood.navigation.Screens
 import com.nima.mymood.utils.Calculate
 import com.nima.mymood.viewmodels.DayGraphViewModel
 import java.util.*
@@ -150,6 +153,15 @@ fun DayGraphScreen(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.End
                 ) {
+                    IconButton(onClick = {
+                        navController.navigate(Screens.EditScreen.name+"/${effect.id}")
+                    },
+                        modifier = Modifier.padding(end = 8.dp)
+                    ) {
+                        Icon(imageVector = Icons.Default.Edit, contentDescription = null,
+                            tint = MaterialTheme.colorScheme.tertiary
+                        )
+                    }
                     OutlinedButton(onClick = {
                         clipboard.setText(AnnotatedString(effect.description))
                     },
@@ -165,7 +177,8 @@ fun DayGraphScreen(
 
                 ElevatedCard(
                     shape = RoundedCornerShape(15.dp),
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxWidth()
                         .padding(vertical = 8.dp, horizontal = 32.dp)
                 ){
                     Column(

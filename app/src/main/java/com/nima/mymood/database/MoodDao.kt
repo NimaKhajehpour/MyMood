@@ -44,6 +44,9 @@ interface MoodDao {
     @Update(onConflict = OnConflictStrategy.REPLACE)
     suspend fun updateEffect(effect: Effect)
 
+    @Query("select * from effect where id = :id")
+    fun getEffectById(id: UUID): Flow<Effect>
+
     @Delete
     suspend fun deleteDay(day: Day)
 
