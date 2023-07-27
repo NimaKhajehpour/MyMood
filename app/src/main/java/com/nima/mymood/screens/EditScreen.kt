@@ -65,7 +65,7 @@ fun EditScreen(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 8.dp)
+                    .padding(bottom = 8.dp)
                     .selectable(
                         selected = editDescription,
                         enabled = true,
@@ -81,10 +81,10 @@ fun EditScreen(
                     onCheckedChange = {
                         editDescription = it
                     },
-                    modifier = Modifier.padding(end = 5.dp, start = 32.dp, bottom = 8.dp),
+                    modifier = Modifier.padding(end = 5.dp, start = 32.dp, bottom = 8.dp, top = 8.dp),
                 )
 
-                Text(text = "Edit Description")
+                Text(text = "Edit Description", modifier = Modifier.padding(bottom = 8.dp, top = 8.dp))
             }
             OutlinedTextField(
                 value = effectDescription, onValueChange = {
@@ -115,10 +115,10 @@ fun EditScreen(
                     onCheckedChange = {
                         editTime = it
                     },
-                    modifier = Modifier.padding(end = 5.dp, start = 32.dp, bottom = 8.dp),
+                    modifier = Modifier.padding(end = 5.dp, start = 32.dp, bottom = 8.dp, top = 8.dp),
                 )
 
-                Text(text = "Edit Time")
+                Text(text = "Edit Time", modifier = Modifier.padding(bottom = 8.dp, top = 8.dp))
             }
             AnimatedVisibility(visible = editTime, enter = fadeIn()+ slideInHorizontally(), exit = fadeOut()+ slideOutHorizontally()) {
                 TimeInput(state = timePicker, modifier = Modifier
@@ -145,10 +145,10 @@ fun EditScreen(
                     onCheckedChange = {
                         editRate = it
                     },
-                    modifier = Modifier.padding(end = 5.dp, start = 32.dp, bottom = 8.dp),
+                    modifier = Modifier.padding(end = 5.dp, start = 32.dp, bottom = 8.dp, top = 8.dp),
                 )
 
-                Text(text = "Edit Rate")
+                Text(text = "Edit Rate", modifier = Modifier.padding(bottom = 8.dp, top = 8.dp))
             }
             AnimatedVisibility(visible = editRate, enter = fadeIn()+ slideInHorizontally(), exit = fadeOut()+ slideOutHorizontally()) {
                 Row(
