@@ -94,7 +94,7 @@ fun HomeScreen(
     val clipboard = LocalClipboardManager.current
 
     val datePickerState = rememberDatePickerState()
-    datePickerState.displayMode = DisplayMode.Input
+    datePickerState.displayMode = DisplayMode.Picker
 
     Column(
         modifier = Modifier
