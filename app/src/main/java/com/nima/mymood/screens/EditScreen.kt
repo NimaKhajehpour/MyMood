@@ -53,7 +53,8 @@ fun EditScreen(
         var effectRate by remember {
             mutableStateOf(effect.value!!.rate)
         }
-        val timePicker = rememberTimePickerState(initialHour = effect.value!!.hour.toInt(), initialMinute = effect.value!!.minute.toInt())
+        val timePicker = rememberTimePickerState(initialHour = if (effect.value!!.hour.isNotBlank())effect.value!!.hour.toInt() else 12,
+            initialMinute = if (effect.value!!.minute.isNotBlank()) effect.value!!.minute.toInt() else 0)
         Column(
             modifier = Modifier
                 .fillMaxWidth()

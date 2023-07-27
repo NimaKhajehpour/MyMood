@@ -200,19 +200,21 @@ fun DayGraphScreen(
                             )
                         }
 
-                        Text(
-                            text = "Time: ${
-                                String.format(
-                                    "%02d:%02d",
-                                    effect.hour.toInt(),
-                                    effect.minute.toInt()
-                                )
-                            }",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.tertiary,
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp)
-                        )
+                        if (effect.hour.isNotBlank()){
+                            Text(
+                                text = "Time: ${
+                                    String.format(
+                                        "%02d:%02d",
+                                        effect.hour.toInt(),
+                                        effect.minute.toInt()
+                                    )
+                                }",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.tertiary,
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp)
+                            )
+                        }
                     }
                 }
             }
