@@ -1,19 +1,24 @@
 package com.nima.mymood.navigation
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.MutableTransitionState
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.nima.mymood.screens.*
+import com.nima.mymood.screens.AboutScreen
+import com.nima.mymood.screens.DayGraphScreen
+import com.nima.mymood.screens.DayScreen
+import com.nima.mymood.screens.DonateScreen
+import com.nima.mymood.screens.EditScreen
+import com.nima.mymood.screens.HappyEffectsScreen
+import com.nima.mymood.screens.HomeScreen
+import com.nima.mymood.screens.MenuScreen
+import com.nima.mymood.screens.NeutralEffectsScreen
+import com.nima.mymood.screens.SadEffectsScreen
+import com.nima.mymood.screens.SaveDaysScreen
+import com.nima.mymood.screens.TodayMoodScreen
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun MoodNavigation() {
@@ -22,7 +27,7 @@ fun MoodNavigation() {
 
     NavHost(navController = navController, startDestination = Screens.HomeScreen.name) {
         composable(Screens.HomeScreen.name) {
-            HomeScreen(navController = navController, viewModel = hiltViewModel())
+            HomeScreen(navController = navController, viewModel = koinViewModel())
         }
 
         composable(
@@ -33,27 +38,27 @@ fun MoodNavigation() {
         ) {
             TodayMoodScreen(
                 navController = navController,
-                viewModel = hiltViewModel(),
+                viewModel = koinViewModel(),
                 id = it.arguments?.getString("id"),
             )
         }
 
         composable(Screens.MenuScreen.name) {
-            MenuScreen(navController = navController, viewModel = hiltViewModel())
+            MenuScreen(navController = navController, viewModel = koinViewModel())
         }
 
         composable(Screens.HappyEffects.name) {
-            HappyEffectsScreen(navController = navController, viewModel = hiltViewModel())
+            HappyEffectsScreen(navController = navController, viewModel = koinViewModel())
         }
         composable(Screens.NeutralEffects.name) {
-            NeutralEffectsScreen(navController = navController, viewModel = hiltViewModel())
+            NeutralEffectsScreen(navController = navController, viewModel = koinViewModel())
         }
         composable(Screens.SadEffects.name) {
-            SadEffectsScreen(navController = navController, viewModel = hiltViewModel())
+            SadEffectsScreen(navController = navController, viewModel = koinViewModel())
         }
 
         composable(Screens.SavedDays.name) {
-            SaveDaysScreen(navController = navController, viewModel = hiltViewModel())
+            SaveDaysScreen(navController = navController, viewModel = koinViewModel())
         }
 
         composable(Screens.DayScreen.name + "/{id}",
@@ -62,7 +67,7 @@ fun MoodNavigation() {
             )
         ) {
             DayScreen(
-                navController = navController, viewModel = hiltViewModel(),
+                navController = navController, viewModel = koinViewModel(),
                 id = it.arguments?.getString("id")
             )
         }
@@ -79,7 +84,7 @@ fun MoodNavigation() {
             DayGraphScreen(
                 navController = navController,
                 id = it.arguments?.getString("id"),
-                hiltViewModel()
+                koinViewModel()
             )
         }
 
@@ -97,7 +102,7 @@ fun MoodNavigation() {
             EditScreen(
                 navController = navController,
                 id = it.arguments?.getString("id"),
-                viewModel = hiltViewModel()
+                viewModel = koinViewModel()
             )
 
         }

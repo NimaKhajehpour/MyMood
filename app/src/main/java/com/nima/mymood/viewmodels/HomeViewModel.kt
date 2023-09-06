@@ -5,15 +5,12 @@ import androidx.lifecycle.viewModelScope
 import com.nima.mymood.model.Day
 import com.nima.mymood.model.Effect
 import com.nima.mymood.repository.MoodRepository
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import java.util.UUID
-import javax.inject.Inject
 
-@HiltViewModel
-class HomeViewModel @Inject constructor(
+class HomeViewModel (
     private val repository: MoodRepository
 )
     : ViewModel() {

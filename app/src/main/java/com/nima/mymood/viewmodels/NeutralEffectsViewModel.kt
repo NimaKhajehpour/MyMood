@@ -4,15 +4,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nima.mymood.model.Effect
 import com.nima.mymood.repository.MoodRepository
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
-import java.util.*
-import javax.inject.Inject
+import java.util.UUID
 
-@HiltViewModel
-class NeutralEffectsViewModel @Inject constructor(private val repository: MoodRepository)
+class NeutralEffectsViewModel (private val repository: MoodRepository)
     :ViewModel(){
 
     fun getNeutralMood() = repository.getEffectByRate(listOf(2)).distinctUntilChanged()

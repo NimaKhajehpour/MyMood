@@ -1,7 +1,6 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
-    id 'dagger.hilt.android.plugin'
     id 'kotlin-kapt'
 }
 
@@ -56,10 +55,10 @@ android {
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = '11'
+        jvmTarget = '17'
     }
     buildFeatures {
         compose true
@@ -98,11 +97,9 @@ dependencies {
     kapt "androidx.room:room-compiler:2.4.3"
     implementation 'androidx.room:room-ktx:2.4.3'
 
-    //Dagger-Hilt
-    implementation "com.google.dagger:hilt-android:2.44"
-    kapt "androidx.hilt:hilt-compiler:1.0.0"
-    kapt "com.google.dagger:hilt-android-compiler:2.44"
-    implementation "androidx.hilt:hilt-navigation-compose:1.0.0"
+    // Koin
+    implementation "io.insert-koin:koin-androidx-compose:3.4.6"
+    implementation "io.insert-koin:koin-androidx-compose-navigation:3.4.6"
 
 
     implementation 'androidx.core:core-ktx:1.7.0'

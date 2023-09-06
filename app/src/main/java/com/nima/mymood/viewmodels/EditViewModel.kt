@@ -4,14 +4,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nima.mymood.model.Effect
 import com.nima.mymood.repository.MoodRepository
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import java.util.UUID
-import javax.inject.Inject
 
-@HiltViewModel
-class EditViewModel @Inject constructor(private val repository: MoodRepository): ViewModel() {
+class EditViewModel (private val repository: MoodRepository): ViewModel() {
 
     fun getEffect(id: UUID) = repository.getEffectById(id).distinctUntilChanged()
 

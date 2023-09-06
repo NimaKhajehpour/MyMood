@@ -7,10 +7,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.conflate
 import kotlinx.coroutines.flow.flowOn
-import java.util.*
-import javax.inject.Inject
+import java.util.UUID
 
-class MoodRepository @Inject constructor(private val dao: MoodDao) {
+class MoodRepository (private val dao: MoodDao) {
 
     suspend fun addDay(day: Day) =
         dao.addDay(day)
