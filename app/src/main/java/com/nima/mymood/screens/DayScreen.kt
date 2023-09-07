@@ -177,7 +177,7 @@ fun DayScreen (
                         shape = RoundedCornerShape(5.dp),
                         elevation = ButtonDefaults.elevatedButtonElevation(15.dp)
                     ) {
-                        Icon(painter = painterResource(id = R.drawable.ic_baseline_ssid_chart_24),
+                        Icon(painter = painterResource(id = R.drawable.baseline_show_chart_24),
                             contentDescription = null)
                     }
                 }

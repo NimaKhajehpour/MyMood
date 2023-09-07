@@ -1,5 +1,6 @@
 package com.nima.mymood.screens
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -31,6 +32,10 @@ fun EditScreen(
     viewModel: EditViewModel
 ){
 
+    BackHandler {
+        navController.popBackStack()
+    }
+
     val effect = viewModel.getEffect(UUID.fromString(id!!)).collectAsState(initial = null)
 
     var editDescription by remember {
@@ -54,7 +59,7 @@ fun EditScreen(
             mutableStateOf(effect.value!!.rate)
         }
         val timePicker = rememberTimePickerState(initialHour = if (effect.value!!.hour.isNotBlank())effect.value!!.hour.toInt() else 12,
-            initialMinute = if (effect.value!!.minute.isNotBlank()) effect.value!!.minute.toInt() else 0)
+            initialMinute = if (effect.value!!.minute.isNotBlank()) effect.value!!.minute.toInt() else 0, is24Hour = false)
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -122,7 +127,7 @@ fun EditScreen(
             }
             AnimatedVisibility(visible = editTime, enter = fadeIn()+ slideInHorizontally(), exit = fadeOut()+ slideOutHorizontally()) {
                 TimeInput(state = timePicker, modifier = Modifier
-                    .fillMaxWidth()
+//                    .fillMaxWidth()
                     .padding(vertical = 8.dp, horizontal = 32.dp)
                 )
             }

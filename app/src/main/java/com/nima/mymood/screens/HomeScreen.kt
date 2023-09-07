@@ -150,7 +150,7 @@ fun HomeScreen(
                     TextButton(onClick = {
                         // get date and go to mood editing
                         val date = Date(datePickerState.selectedDateMillis!!)
-                        val selectedDay = date.date+1
+                        val selectedDay = date.date
                         val selectedMonth = date.month+1
                         val selectedYear = date.year+1900
                         var selectedDate: Day? = null

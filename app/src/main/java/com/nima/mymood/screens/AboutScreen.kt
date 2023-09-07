@@ -15,6 +15,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.platform.ClipboardManager
@@ -95,16 +96,17 @@ fun AboutScreen(
                     contentColor = MaterialTheme.colorScheme.onTertiaryContainer,
                     containerColor = MaterialTheme.colorScheme.tertiaryContainer
                 ),
-                modifier = Modifier.padding(vertical = 8.dp, horizontal = 32.dp)
+                modifier = Modifier
+                    .padding(vertical = 8.dp, horizontal = 32.dp)
                     .fillMaxWidth()
             ) {
-                Image(
+                Icon(
                     painter = painterResource(id = R.drawable.github_mark),
                     contentDescription = null,
-                    colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onTertiaryContainer),
                     modifier = Modifier
                         .padding(end = 10.dp)
-                        .size(32.dp)
+                        .size(32.dp),
+                    tint = Color.White
                 )
 
                 Text(text = "See App Repository")
@@ -121,16 +123,17 @@ fun AboutScreen(
                     contentColor = MaterialTheme.colorScheme.onTertiaryContainer,
                     containerColor = MaterialTheme.colorScheme.tertiaryContainer
                 ),
-                modifier = Modifier.padding(vertical = 8.dp, horizontal = 32.dp)
+                modifier = Modifier
+                    .padding(vertical = 8.dp, horizontal = 32.dp)
                     .fillMaxWidth()
             ) {
-                Image(
+                Icon(
                     painter = painterResource(id = R.drawable.github_mark),
                     contentDescription = null,
-                    colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onTertiaryContainer),
                     modifier = Modifier
                         .padding(end = 10.dp)
-                        .size(32.dp)
+                        .size(32.dp),
+                    tint = Color.White
                 )
 
                 Text(text = "Made by: Nima Khajehpour")
@@ -144,10 +147,11 @@ fun AboutScreen(
                     context.startActivity(browserIntent)
                 },
                 shape = RoundedCornerShape(5.dp),
-                modifier = Modifier.padding(vertical = 8.dp, horizontal = 32.dp)
+                modifier = Modifier
+                    .padding(vertical = 8.dp, horizontal = 32.dp)
                     .fillMaxWidth()
             ) {
-                Image(
+                Icon(
                     painter = painterResource(id = R.drawable.ic_baseline_bug_report_24),
                     contentDescription = null,
                     modifier = Modifier
@@ -156,6 +160,33 @@ fun AboutScreen(
                 )
 
                 Text(text = "Report a bug/Request features")
+            }
+
+            Button(
+                onClick = {
+                    val browserIntent = Intent(Intent.ACTION_VIEW)
+                    browserIntent.data =
+                        Uri.parse("https://t.me/+bwYZeynt5JNkMDdk")
+                    context.startActivity(browserIntent)
+                },
+                shape = RoundedCornerShape(5.dp),
+                modifier = Modifier
+                    .padding(vertical = 8.dp, horizontal = 32.dp)
+                    .fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFF2AABEE)
+                )
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.telegram_logo),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .padding(end = 10.dp)
+                        .size(32.dp),
+                    tint = Color.White
+                )
+
+                Text(text = "Join Telegram Group")
             }
         }
     }
