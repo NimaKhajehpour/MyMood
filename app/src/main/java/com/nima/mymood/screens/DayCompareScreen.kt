@@ -76,7 +76,7 @@ import kotlin.random.Random
 fun DayCompareScreen(
     navController: NavController,
     viewModel: DayCompareViewModel
-){
+) {
 
     val allDays = viewModel.getAllDays().collectAsState(initial = null).value
 
@@ -104,7 +104,7 @@ fun DayCompareScreen(
         mutableStateOf(emptyList<DataPoint>())
     }
 
-    if (!allDays.isNullOrEmpty()){
+    if (!allDays.isNullOrEmpty()) {
         BottomSheetScaffold(
             sheetContent = {
                 Column(
@@ -113,23 +113,24 @@ fun DayCompareScreen(
                         .verticalScroll(rememberScrollState()),
                     verticalArrangement = Arrangement.Top,
                     horizontalAlignment = Alignment.CenterHorizontally,
-                ){
+                ) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.End
                     ) {
-                        IconButton(onClick = {
-                            scope.launch {
-                                scaffoldState.bottomSheetState.hide()
-                            }
-                        },
+                        IconButton(
+                            onClick = {
+                                scope.launch {
+                                    scaffoldState.bottomSheetState.hide()
+                                }
+                            },
                             modifier = Modifier.padding(end = 8.dp)
-                            ) {
+                        ) {
                             Icon(imageVector = Icons.Default.Close, contentDescription = null)
                         }
                     }
-                    allDays.forEach{day ->
+                    allDays.forEach { day ->
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -171,7 +172,7 @@ fun DayCompareScreen(
                                     }
                                 }
                             })
-                            DaySelectItem(date = "${Calculate.calculateMonthName(day.month)} ${day.day } ${day.year}")
+                            DaySelectItem(date = "${Calculate.calculateMonthName(day.month)} ${day.day} ${day.year}")
                         }
                     }
                 }
@@ -188,17 +189,18 @@ fun DayCompareScreen(
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Button(onClick = {
-                    scope.launch {
-                        scaffoldState.bottomSheetState.expand()
-                    }
-                },
+                Button(
+                    onClick = {
+                        scope.launch {
+                            scaffoldState.bottomSheetState.expand()
+                        }
+                    },
                     modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp)
-                    ) {
+                ) {
                     Text(text = "Select Days")
                 }
 
-                if (!days.filter { it.value.isNotEmpty() }.isNullOrEmpty()){
+                if (!days.filter { it.value.isNotEmpty() }.isNullOrEmpty()) {
                     LineGraph(graphLine =
                     GraphLine(
                         lines = days.map {
@@ -229,8 +231,8 @@ fun DayCompareScreen(
                         paddingRight = 16.dp,
                         yAxis = GraphLine.YAxis(
                             steps = 5,
-                            content = {min, offset, _ ->
-                                for (step in 0 until 5){
+                            content = { min, offset, _ ->
+                                for (step in 0 until 5) {
                                     val value = step * offset + min
                                     Calculate.calculateIconWithRate(rate = value.toInt())
                                 }
@@ -252,27 +254,30 @@ fun DayCompareScreen(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.SpaceEvenly
                     ) {
-                        Text(text = "Zoom",
+                        Text(
+                            text = "Zoom",
                             style = MaterialTheme.typography.labelSmall,
                             fontWeight = FontWeight.ExtraLight
                         )
-                        Text(text = "Pan",
+                        Text(
+                            text = "Pan",
                             style = MaterialTheme.typography.labelSmall,
                             fontWeight = FontWeight.ExtraLight
                         )
-                        Text(text = "* Double Tap and drag for selection",
+                        Text(
+                            text = "* Double Tap and drag for selection",
                             style = MaterialTheme.typography.labelSmall,
                             fontWeight = FontWeight.ExtraLight
                         )
                     }
                 }
 
-                if (pointsList.value.isNotEmpty()){
+                if (pointsList.value.isNotEmpty()) {
                     val effects = remember(pointsList.value) {
                         mutableStateOf(days.values.filter {
                             it.size >= pointsList.value[0].x.toInt()
                         }.map { effects ->
-                            effects[pointsList.value[0].x.toInt()-1]
+                            effects[pointsList.value[0].x.toInt() - 1]
                         })
                     }
 
@@ -283,82 +288,93 @@ fun DayCompareScreen(
                             }.keys.toList()[0]
                         }.first()
                         Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 8.dp, horizontal = 16.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.End
-                    ) {
-                        IconButton(onClick = {
-                            navController.navigate(Screens.EditScreen.name+"/${effect.id}")
-                        },
-                            modifier = Modifier.padding(end = 8.dp)
-                        ) {
-                            Icon(imageVector = Icons.Default.Edit, contentDescription = null,
-                                tint = MaterialTheme.colorScheme.tertiary
-                            )
-                        }
-                        OutlinedButton(onClick = {
-                            clipboard.setText(AnnotatedString(effect.description))
-                        },
-                            shape = RoundedCornerShape(5.dp)
-                        ) {
-                            Icon(painter = painterResource(id = R.drawable.ic_baseline_content_copy_24),
-                                contentDescription = null,
-                                modifier = Modifier.padding(end = 5.dp)
-                            )
-                            Text("Copy Description")
-                        }
-                    }
-
-                    ElevatedCard(
-                        shape = RoundedCornerShape(15.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 8.dp, horizontal = 32.dp)
-                    ){
-                        Column(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(8.dp),
-                            verticalArrangement = Arrangement.Top,
-                            horizontalAlignment = Alignment.CenterHorizontally
+                                .padding(vertical = 8.dp, horizontal = 16.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.End
                         ) {
-                            Calculate.calculateIconWithRate(rate = effect.rate, size = 64.dp)
-
-                            SelectionContainer {
-                                Text(
-                                    text = effect.description,
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = MaterialTheme.colorScheme.tertiary,
-                                    textAlign = TextAlign.Center,
-                                    modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp)
+                            IconButton(
+                                onClick = {
+                                    navController.navigate(Screens.EditScreen.name + "/${effect.id}")
+                                },
+                                modifier = Modifier.padding(end = 8.dp)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Edit, contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.tertiary
                                 )
                             }
-
-                            if (effect.hour.isNotBlank()){
-                                Text(
-                                    text = "Time: ${
-                                        String.format(
-                                            "%02d:%02d",
-                                            effect.hour.toInt(),
-                                            effect.minute.toInt()
-                                        )
-                                    }",
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = MaterialTheme.colorScheme.tertiary,
-                                    textAlign = TextAlign.Center,
-                                    modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp)
+                            OutlinedButton(
+                                onClick = {
+                                    clipboard.setText(AnnotatedString(effect.description))
+                                },
+                                shape = RoundedCornerShape(5.dp)
+                            ) {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.ic_baseline_content_copy_24),
+                                    contentDescription = null,
+                                    modifier = Modifier.padding(end = 5.dp)
                                 )
+                                Text("Copy Description")
                             }
-                            Text(text = "${Calculate.calculateMonthName(day.month)} ${day.day} ${day.year}",
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.tertiary,
-                                textAlign = TextAlign.Center,
-                                modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp)
-                                )
                         }
-                    }
+
+                        ElevatedCard(
+                            shape = RoundedCornerShape(15.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 8.dp, horizontal = 32.dp)
+                        ) {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(8.dp),
+                                verticalArrangement = Arrangement.Top,
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Calculate.calculateIconWithRate(rate = effect.rate, size = 64.dp)
+
+                                SelectionContainer {
+                                    Text(
+                                        text = effect.description,
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = MaterialTheme.colorScheme.tertiary,
+                                        textAlign = TextAlign.Center,
+                                        modifier = Modifier.padding(
+                                            vertical = 8.dp,
+                                            horizontal = 16.dp
+                                        )
+                                    )
+                                }
+
+                                if (effect.hour.isNotBlank()) {
+                                    Text(
+                                        text = "Time: ${
+                                            String.format(
+                                                "%02d:%02d",
+                                                effect.hour.toInt(),
+                                                effect.minute.toInt()
+                                            )
+                                        }",
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = MaterialTheme.colorScheme.tertiary,
+                                        textAlign = TextAlign.Center,
+                                        modifier = Modifier.padding(
+                                            vertical = 8.dp,
+                                            horizontal = 16.dp
+                                        )
+                                    )
+                                }
+                                Text(
+                                    text = "${Calculate.calculateMonthName(day.month)} ${day.day} ${day.year}",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.tertiary,
+                                    textAlign = TextAlign.Center,
+                                    modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp)
+                                )
+                            }
+                        }
                     }
                 }
             }

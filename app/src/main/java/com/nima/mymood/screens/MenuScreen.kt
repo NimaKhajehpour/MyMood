@@ -3,6 +3,7 @@ package com.nima.mymood.screens
 import android.Manifest
 import android.app.DatePickerDialog
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Environment
 import android.util.AttributeSet
 import android.util.Log
@@ -15,10 +16,15 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Info
@@ -34,6 +40,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.colorspace.Rgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
@@ -77,6 +84,7 @@ fun MenuScreen(
     val themeDataStore = ThemeDataStore(context)
     
     val isDark = themeDataStore.getTheme.collectAsState(initial = false).value
+    val useDynamicColors = themeDataStore.getMaterialYou.collectAsState(initial = false).value
 
     var showExportDialog by remember{
         mutableStateOf(false)
@@ -95,11 +103,114 @@ fun MenuScreen(
     val allDays = viewModel.getAllDays().collectAsState(initial = emptyList()).value
     val allEffects = viewModel.getAllEffects().collectAsState(initial = emptyList()).value
 
+    var showThemeSelectDialog by remember {
+        mutableStateOf(false)
+    }
+
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.Start
     ) {
+
+        if (showThemeSelectDialog){
+            AlertDialog(onDismissRequest = {
+                showThemeSelectDialog = false
+            },
+                confirmButton = {
+                    TextButton(onClick = {
+                        showThemeSelectDialog = false
+                    }) {
+                        Text(text = "Confirm")
+                    }
+                },
+                icon = {
+                    Icon(painter = painterResource(id = R.drawable.baseline_palette_24), contentDescription = null)
+                },
+                title ={
+                    Text(text = "Theme Select")
+                },
+                shape = RoundedCornerShape(15.dp),
+                text = {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .verticalScroll(rememberScrollState()),
+                        verticalArrangement = Arrangement.Top,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Column {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(8.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceEvenly
+                            ){
+                                Button(
+                                    onClick = {
+                                        scope.launch {
+                                            themeDataStore.saveTheme(true)
+                                        }
+                                    },
+                                    modifier = Modifier
+                                        .padding(8.dp)
+                                        .height(120.dp),
+                                    shape = RoundedCornerShape(15.dp),
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = Color.Black,
+                                        contentColor = Color.White
+                                    ),
+                                    border = if (isDark == true) BorderStroke(2.dp, color = Color.Cyan) else null
+                                ) {
+                                    Text(text = "Dark Theme")
+                                }
+                                Button(
+                                    onClick = {
+                                        scope.launch {
+                                            themeDataStore.saveTheme(false)
+                                        }
+                                    },
+                                    modifier = Modifier
+                                        .padding(8.dp)
+                                        .height(120.dp),
+                                    shape = RoundedCornerShape(15.dp),
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = Color.White,
+                                        contentColor = Color.Black
+                                    ),
+                                    border = if (isDark == false) BorderStroke(2.dp, color = Color.Cyan) else null
+                                ) {
+                                    Text(text = "Light Theme")
+                                }
+                            }
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(8.dp)
+                                    .selectable(
+                                        selected = useDynamicColors!!,
+                                        role = Role.Checkbox
+                                    ) {
+                                        scope.launch {
+                                            themeDataStore.saveMaterialYou(!useDynamicColors)
+                                        }
+                                    },
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.Center
+                            ) {
+                                Checkbox(checked = useDynamicColors!!, onCheckedChange = {
+                                    scope.launch {
+                                        themeDataStore.saveMaterialYou(!useDynamicColors)
+                                    }
+                                })
+                                Text(text = "Dynamic Colors")
+                            }
+                        }
+                    }
+                }
+            )
+        }
 
         if (showExportDialog){
             AlertDialog(onDismissRequest = {  },
@@ -299,23 +410,36 @@ fun MenuScreen(
             }
 
 
-            FilledIconButton(
-                onClick = {
-                    scope.launch { 
-                        themeDataStore.saveTheme(!isDark!!)
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S){
+                FilledIconButton(
+                    onClick = {
+                        scope.launch {
+                            themeDataStore.saveTheme(!isDark!!)
+                        }
+                    },
+                    shape = CircleShape,
+                    modifier = Modifier.padding(16.dp)
+                ) {
+                    AnimatedContent(targetState = isDark) {
+                        if (isDark == true){
+                            Icon(painter = painterResource(id = R.drawable.ic_baseline_light_mode_24),
+                                contentDescription = null)
+                        }else{
+                            Icon(painter = painterResource(id = R.drawable.ic_baseline_dark_mode_24),
+                                contentDescription = null)
+                        }
                     }
+                }
+            }
+            else{
+                FilledIconButton(onClick = {
+                    // show theme select dialog
+                    showThemeSelectDialog = true
                 },
-                shape = CircleShape,
-                modifier = Modifier.padding(16.dp)
-            ) {
-                AnimatedContent(targetState = isDark) {
-                    if (isDark == true){
-                        Icon(painter = painterResource(id = R.drawable.ic_baseline_light_mode_24),
-                            contentDescription = null)
-                    }else{
-                        Icon(painter = painterResource(id = R.drawable.ic_baseline_dark_mode_24),
-                            contentDescription = null)
-                    }
+                    shape = CircleShape,
+                    modifier = Modifier.padding(16.dp)
+                    ) {
+                    Icon(painter = painterResource(id = R.drawable.baseline_palette_24), contentDescription = null)
                 }
             }
         }
@@ -627,6 +751,17 @@ fun MenuScreen(
                 MenuItems(icon = null,
                     icon2 = R.drawable.ic_baseline_ssid_chart_24,
                     title = "Compare Days",
+                    tint = MaterialTheme.colorScheme.tertiary
+                ) {
+                    // go to day compare
+                    navController.navigate(Screens.DayCompareScreen.name)
+                }
+            }
+
+            item {
+                MenuItems(icon = null,
+                    icon2 = R.drawable.baseline_show_chart_24,
+                    title = "Days Graph Overview",
                     tint = MaterialTheme.colorScheme.tertiary
                 ) {
                     // go to day compare

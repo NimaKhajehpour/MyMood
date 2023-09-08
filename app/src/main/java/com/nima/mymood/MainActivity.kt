@@ -1,5 +1,6 @@
 package com.nima.mymood
 
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -13,6 +14,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import com.nima.mymood.navigation.MoodNavigation
 import com.nima.mymood.ui.theme.MyMoodTheme
+import kotlinx.coroutines.flow.collectIndexed
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -24,7 +26,9 @@ class MainActivity : ComponentActivity() {
             val themeDataStore = ThemeDataStore(context)
 
             MyMoodTheme(
-                useDarkTheme = themeDataStore.getTheme.collectAsState(initial = false).value!!
+                useDarkTheme = themeDataStore.getTheme.collectAsState(initial = false).value!!,
+                useDynamicColors =   if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
+                    themeDataStore.getMaterialYou.collectAsState(initial = false).value!! else false
             ) {
                 // A surface container using the 'background' color from the theme
                 Surface(

@@ -17,6 +17,7 @@ class ThemeDataStore(private val context: Context) {
         private val Context.datastore: DataStore<Preferences> by preferencesDataStore("theme")
 
         val themeKey = booleanPreferencesKey("app_theme")
+        val materialYou = booleanPreferencesKey("material_you")
     }
 
     val getTheme: Flow<Boolean?> = context.datastore.data
@@ -27,6 +28,17 @@ class ThemeDataStore(private val context: Context) {
     suspend fun saveTheme(isDark: Boolean){
         context.datastore.edit {
             it[themeKey] = isDark
+        }
+    }
+
+    val getMaterialYou: Flow<Boolean?> = context.datastore.data
+        .map {
+            it[materialYou] ?: false
+        }
+
+    suspend fun saveMaterialYou(isYou: Boolean){
+        context.datastore.edit {
+            it[materialYou] = isYou
         }
     }
 }
