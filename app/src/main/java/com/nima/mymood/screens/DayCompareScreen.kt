@@ -111,7 +111,6 @@ fun DayCompareScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .verticalScroll(rememberScrollState()),
-//                    contentPadding = PaddingValues(vertical = 5.dp, horizontal = 16.dp),
                     verticalArrangement = Arrangement.Top,
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ){
@@ -124,7 +123,9 @@ fun DayCompareScreen(
                             scope.launch {
                                 scaffoldState.bottomSheetState.hide()
                             }
-                        }) {
+                        },
+                            modifier = Modifier.padding(end = 8.dp)
+                            ) {
                             Icon(imageVector = Icons.Default.Close, contentDescription = null)
                         }
                     }
@@ -267,8 +268,6 @@ fun DayCompareScreen(
                 }
 
                 if (pointsList.value.isNotEmpty()){
-
-//                    val effect = effects.value[pointsList.value[0].x.toInt()-1]
                     val effects = remember(pointsList.value) {
                         mutableStateOf(days.values.filter {
                             it.size >= pointsList.value[0].x.toInt()
