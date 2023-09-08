@@ -622,6 +622,17 @@ fun MenuScreen(
                     }
                 }
             }
+
+            item {
+                MenuItems(icon = null,
+                    icon2 = R.drawable.ic_baseline_ssid_chart_24,
+                    title = "Compare Days",
+                    tint = MaterialTheme.colorScheme.tertiary
+                ) {
+                    // go to day compare
+                    navController.navigate(Screens.DayCompareScreen.name)
+                }
+            }
         }
     }
 }

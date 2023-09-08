@@ -1,10 +1,10 @@
 package com.nima.mymood.di
 
 import androidx.room.Room
-import com.nima.mymood.database.MoodDao
 import com.nima.mymood.database.MoodDatabase
 import com.nima.mymood.database.migration1to2
 import com.nima.mymood.repository.MoodRepository
+import com.nima.mymood.viewmodels.DayCompareViewModel
 import com.nima.mymood.viewmodels.DayGraphViewModel
 import com.nima.mymood.viewmodels.DayViewModel
 import com.nima.mymood.viewmodels.EditViewModel
@@ -46,4 +46,5 @@ val appModule = module {
     viewModel { SadEffectsViewModel(get()) }
     viewModel { SavedDaysViewModel(get()) }
     viewModel { TodayMoodViewModel(get()) }
+    viewModel { DayCompareViewModel(get()) }
 }

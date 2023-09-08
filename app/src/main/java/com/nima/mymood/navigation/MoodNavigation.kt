@@ -7,6 +7,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.nima.mymood.screens.AboutScreen
+import com.nima.mymood.screens.DayCompareScreen
 import com.nima.mymood.screens.DayGraphScreen
 import com.nima.mymood.screens.DayScreen
 import com.nima.mymood.screens.DonateScreen
@@ -105,6 +106,10 @@ fun MoodNavigation() {
                 viewModel = koinViewModel()
             )
 
+        }
+
+        composable(Screens.DayCompareScreen.name){
+            DayCompareScreen(navController = navController, viewModel = koinViewModel())
         }
     }
 }
