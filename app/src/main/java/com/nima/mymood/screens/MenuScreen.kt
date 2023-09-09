@@ -764,8 +764,8 @@ fun MenuScreen(
                     title = "Days Graph Overview",
                     tint = MaterialTheme.colorScheme.tertiary
                 ) {
-                    // go to day compare
-                    navController.navigate(Screens.DayCompareScreen.name)
+                    // go to days overview
+                    navController.navigate(Screens.DaysGraphOverViewScreen.name)
                 }
             }
         }

@@ -7,6 +7,7 @@ import com.nima.mymood.repository.MoodRepository
 import com.nima.mymood.viewmodels.DayCompareViewModel
 import com.nima.mymood.viewmodels.DayGraphViewModel
 import com.nima.mymood.viewmodels.DayViewModel
+import com.nima.mymood.viewmodels.DaysOverviewViewModel
 import com.nima.mymood.viewmodels.EditViewModel
 import com.nima.mymood.viewmodels.HappyEffectsViewModel
 import com.nima.mymood.viewmodels.HomeViewModel
@@ -47,4 +48,5 @@ val appModule = module {
     viewModel { SavedDaysViewModel(get()) }
     viewModel { TodayMoodViewModel(get()) }
     viewModel { DayCompareViewModel(get()) }
+    viewModel { DaysOverviewViewModel(get()) }
 }
