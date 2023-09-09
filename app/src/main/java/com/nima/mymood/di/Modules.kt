@@ -4,6 +4,7 @@ import androidx.room.Room
 import com.nima.mymood.database.MoodDatabase
 import com.nima.mymood.database.migration1to2
 import com.nima.mymood.repository.MoodRepository
+import com.nima.mymood.viewmodels.CalendarOverViewViewModel
 import com.nima.mymood.viewmodels.DayCompareViewModel
 import com.nima.mymood.viewmodels.DayGraphViewModel
 import com.nima.mymood.viewmodels.DayViewModel
@@ -49,4 +50,5 @@ val appModule = module {
     viewModel { TodayMoodViewModel(get()) }
     viewModel { DayCompareViewModel(get()) }
     viewModel { DaysOverviewViewModel(get()) }
+    viewModel { CalendarOverViewViewModel(get()) }
 }

@@ -14,5 +14,6 @@ enum class Screens {
     DonateScreen,
     EditScreen,
     DayCompareScreen,
-    DaysGraphOverViewScreen
+    DaysGraphOverViewScreen,
+    DaysCalendarOverView
 }

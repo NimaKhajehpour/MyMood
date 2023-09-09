@@ -10,6 +10,7 @@ import com.nima.mymood.screens.AboutScreen
 import com.nima.mymood.screens.DayCompareScreen
 import com.nima.mymood.screens.DayGraphScreen
 import com.nima.mymood.screens.DayScreen
+import com.nima.mymood.screens.DaysCalendarOverView
 import com.nima.mymood.screens.DaysGraphOverviewScreen
 import com.nima.mymood.screens.DonateScreen
 import com.nima.mymood.screens.EditScreen
@@ -115,6 +116,10 @@ fun MoodNavigation() {
 
         composable(Screens.DaysGraphOverViewScreen.name){
             DaysGraphOverviewScreen(navController = navController, viewModel = koinViewModel())
+        }
+
+        composable(Screens.DaysCalendarOverView.name){
+            DaysCalendarOverView(navController = navController, viewModel = koinViewModel())
         }
     }
 }

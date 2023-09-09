@@ -768,6 +768,17 @@ fun MenuScreen(
                     navController.navigate(Screens.DaysGraphOverViewScreen.name)
                 }
             }
+            item {
+                MenuItems(icon = null,
+                    icon2 = R.drawable.baseline_calendar_month_24,
+                    title = "Days Calendar Overview",
+                    tint = MaterialTheme.colorScheme.tertiary
+                ) {
+                    // go to days overview
+                    navController.navigate(Screens.DaysCalendarOverView.name)
+                }
+            }
+
         }
     }
 }

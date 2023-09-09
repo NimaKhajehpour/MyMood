@@ -54,8 +54,9 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_17
+        coreLibraryDesugaringEnabled true
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
     kotlinOptions {
         jvmTarget = '17'
@@ -74,6 +75,9 @@ android {
 }
 
 dependencies {
+
+    //desugaring
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.2.2'
 
     //datastore
     implementation "androidx.datastore:datastore-preferences:1.0.0"
