@@ -58,4 +58,7 @@ class MoodRepository (private val dao: MoodDao) {
 
     fun getEffectById(id: UUID): Flow<Effect> =
         dao.getEffectById(id).flowOn(Dispatchers.IO).conflate()
+
+    fun getDayAVG(fk: UUID): Flow<Double> =
+        dao.getDayAVG(fk).flowOn(Dispatchers.IO).conflate()
 }

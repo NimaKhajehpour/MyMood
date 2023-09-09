@@ -32,6 +32,9 @@ interface MoodDao {
     @Query("select * from day where id = :id")
     fun getDayById(id: UUID): Flow<Day>
 
+    @Query("select case when count(*) is not 0 then avg(rate) else 0.0 end as avg from effect where foreignKey = :fk")
+    fun getDayAVG(fk: UUID): Flow<Double>
+
     @Query("select * from day order by year desc, month desc, day desc")
     fun getAllDays(): Flow<List<Day>>
 

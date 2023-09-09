@@ -18,6 +18,7 @@ class ThemeDataStore(private val context: Context) {
 
         val themeKey = booleanPreferencesKey("app_theme")
         val materialYou = booleanPreferencesKey("material_you")
+        val autoRateDay = booleanPreferencesKey("auto_rate")
     }
 
     val getTheme: Flow<Boolean?> = context.datastore.data
@@ -28,6 +29,17 @@ class ThemeDataStore(private val context: Context) {
     suspend fun saveTheme(isDark: Boolean){
         context.datastore.edit {
             it[themeKey] = isDark
+        }
+    }
+
+    val getAutoRate: Flow<Boolean?> = context.datastore.data
+        .map {
+            it[autoRateDay] ?: false
+        }
+
+    suspend fun saveAutoRate(autoRate: Boolean){
+        context.datastore.edit {
+            it[autoRateDay] = autoRate
         }
     }
 

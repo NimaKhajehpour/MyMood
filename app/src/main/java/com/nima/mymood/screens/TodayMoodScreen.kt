@@ -25,6 +25,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.nima.mymood.R
+import com.nima.mymood.ThemeDataStore
 import com.nima.mymood.components.EffectsListItem
 import com.nima.mymood.model.Effect
 import com.nima.mymood.navigation.Screens
@@ -45,7 +46,11 @@ fun TodayMoodScreen(
 
     val day = viewModel.getDayById(UUID.fromString(id)).collectAsState(initial = null)
 
+    val scope = rememberCoroutineScope()
     val context = LocalContext.current
+
+    val appDataStore = ThemeDataStore(context)
+    val autoRate = appDataStore.getAutoRate.collectAsState(initial = false).value
 
     val clipboard = LocalClipboardManager.current
 
@@ -239,49 +244,77 @@ fun TodayMoodScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ){
                 item {
-                    if (day.value!!.rate.isNotBlank()){
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(top = 8.dp),
-                            verticalArrangement = Arrangement.Center,
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            Icon(painter = painterResource(id =
-                                when(day.value!!.rate.toInt()){
-                                    0 -> R.drawable.ic_outline_sentiment_very_satisfied_24
-                                    1 -> R.drawable.ic_outline_sentiment_satisfied_alt_24
-                                    2 -> R.drawable.ic_outline_sentiment_neutral_24
-                                    3 -> R.drawable.ic_outline_sentiment_dissatisfied_24
-                                    else -> R.drawable.ic_outline_sentiment_very_dissatisfied_24
-                                }
-                            ),
-                                contentDescription = null,
-                                tint = Color(
-                                    red = day.value!!.red.toInt(),
-                                    green = day.value!!.green.toInt(),
-                                    blue = day.value!!.blue.toInt(),
-                                ),
+                    if (autoRate == false){
+                        if (day.value!!.rate.isNotBlank()) {
+                            Column(
                                 modifier = Modifier
-                                    .size(120.dp)
-                                    .padding(bottom = 8.dp)
-                            )
+                                    .fillMaxWidth()
+                                    .padding(top = 8.dp),
+                                verticalArrangement = Arrangement.Center,
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Icon(
+                                    painter = painterResource(
+                                        id =
+                                        when (day.value!!.rate.toInt()) {
+                                            0 -> R.drawable.ic_outline_sentiment_very_satisfied_24
+                                            1 -> R.drawable.ic_outline_sentiment_satisfied_alt_24
+                                            2 -> R.drawable.ic_outline_sentiment_neutral_24
+                                            3 -> R.drawable.ic_outline_sentiment_dissatisfied_24
+                                            else -> R.drawable.ic_outline_sentiment_very_dissatisfied_24
+                                        }
+                                    ),
+                                    contentDescription = null,
+                                    tint = Color(
+                                        red = day.value!!.red.toInt(),
+                                        green = day.value!!.green.toInt(),
+                                        blue = day.value!!.blue.toInt(),
+                                    ),
+                                    modifier = Modifier
+                                        .size(120.dp)
+                                        .padding(bottom = 8.dp)
+                                )
 
-                            Button(onClick = {
-                                updateDay = true
-                            }) {
-                                Text("Edit Day Overall Rate")
+                                Button(onClick = {
+                                    updateDay = true
+                                }) {
+                                    Text("Edit Day Overall Rate")
+                                }
+                            }
+
+                        } else {
+                            Button(
+                                onClick = {
+                                    updateDay = true
+                                },
+                                modifier = Modifier.padding(top = 8.dp)
+                            ) {
+                                Text(text = "Select an Overall Mood")
                             }
                         }
-
                     }else{
-                        Button(onClick = {
-                            updateDay = true
-                        },
-                            modifier = Modifier.padding(top = 8.dp)
-                        ) {
-                            Text(text = "Select an Overall Mood")
-                        }
+                        val avg = if (effectsList.value.isNotEmpty()){
+                            effectsList.value.sumOf {
+                                it.rate
+                            }/effectsList.value.size
+                        } else 0
+
+                        Calculate.calculateIconWithRate(rate = avg, size = 120.dp)
+                    }
+                }
+
+                item {
+                    Row(
+                        modifier = Modifier.padding(16.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Checkbox(checked = autoRate == true, onCheckedChange = {
+                            scope.launch {
+                                appDataStore.saveAutoRate(!autoRate!!)
+                            }
+                        })
+                        Text(text = "Auto Rate Days?")
                     }
                 }
 
