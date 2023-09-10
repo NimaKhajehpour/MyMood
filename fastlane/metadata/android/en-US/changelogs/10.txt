@@ -1,0 +1,15 @@
+Bug Fixes:
+- graph screen would crash if an effect did not have time.
+UI Improvements:
+- divided donations and about screen and added telegram group link.
+- Misc UI Changes
+App Improvements:
+- Misc Improvements
+- changed edit system and put on separate screen
+- (for nerds) migrated from dagger to koin
+Features Added:
+- Added Overview of Days with Calendar
+- Added Overview of Days with Graph
+- Added Days Compare Using Graphs
+- Added Auto Day Rating
+- Added Material You Theme Support
