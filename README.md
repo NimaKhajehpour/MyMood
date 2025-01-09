@@ -11,7 +11,7 @@ You can add events that effected your mood today, see all the events by their ef
 
 Or get the latest APK from the [Releases Section](https://github.com/NimaKhajehpour/MyMood/releases/latest).
 
-For easier communication with me (the developer) come hang out in my [telegram group](https://t.me/+bwYZeynt5JNkMDdk)
+For easier communication with me (the developer) come hang out in my [telegram group](https://t.me/+bwYZeynt5JNkMDdk) not a boomer? i recently made discord server too [join me](https://discord.gg/6fq6MvX3fG)
 
 ## Donate Crypto to the Creator
 
