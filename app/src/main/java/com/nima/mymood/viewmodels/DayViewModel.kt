@@ -20,13 +20,4 @@ class DayViewModel (private val repository: MoodRepository)
         repository.deleteEffect(effect)
 
     }
-
-    fun deleteDay(day: Day) =
-        viewModelScope.launch {
-            repository.deleteDay(day)
-        }
-
-    fun updateEffect(effect: Effect) = viewModelScope.launch(Dispatchers.IO) {
-        repository.updateEffect(effect)
-    }
 }

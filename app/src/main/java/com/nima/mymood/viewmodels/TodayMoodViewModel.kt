@@ -25,12 +25,6 @@ class TodayMoodViewModel (private val repository: MoodRepository)
 
     fun getDayById(id: UUID) = repository.getDayById(id).distinctUntilChanged()
 
-    fun getDayEffects(fk: UUID) = repository.getEffectsByFK(fk).distinctUntilChanged()
-
-    suspend fun deleteDay(day: Day) = repository.deleteDay(day)
-
-    suspend fun deleteDayEffects(fk: UUID) = repository.deleteDayEffects(fk)
-
     fun deleteEffect(effect: Effect) = viewModelScope.launch(Dispatchers.IO) {
         repository.deleteEffect(effect)
 

@@ -1,36 +1,38 @@
 package com.nima.mymood.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavArgument
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.nima.mymood.screens.AboutScreen
+import com.nima.mymood.screens.AllEffectsScreen
 import com.nima.mymood.screens.DayCompareScreen
-import com.nima.mymood.screens.DayGraphScreen
 import com.nima.mymood.screens.DayScreen
-import com.nima.mymood.screens.DaysCalendarOverView
+import com.nima.mymood.screens.DaySettingsScreen
+//import com.nima.mymood.screens.DaysCalendarOverView
 import com.nima.mymood.screens.DaysGraphOverviewScreen
 import com.nima.mymood.screens.DonateScreen
 import com.nima.mymood.screens.EditScreen
-import com.nima.mymood.screens.HappyEffectsScreen
 import com.nima.mymood.screens.HomeScreen
-import com.nima.mymood.screens.MenuScreen
-import com.nima.mymood.screens.NeutralEffectsScreen
-import com.nima.mymood.screens.SadEffectsScreen
 import com.nima.mymood.screens.SaveDaysScreen
+import com.nima.mymood.screens.SettingsScreen
 import com.nima.mymood.screens.TodayMoodScreen
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun MoodNavigation() {
-
-    val navController = rememberNavController()
-
+fun MoodNavigation(navController: NavHostController) {
     NavHost(navController = navController, startDestination = Screens.HomeScreen.name) {
-        composable(Screens.HomeScreen.name) {
-            HomeScreen(navController = navController, viewModel = koinViewModel())
+
+        composable(
+            Screens.HomeScreen.name
+        ){
+            HomeScreen(navController = navController, viewModel=koinViewModel())
         }
 
         composable(
@@ -44,20 +46,6 @@ fun MoodNavigation() {
                 viewModel = koinViewModel(),
                 id = it.arguments?.getString("id"),
             )
-        }
-
-        composable(Screens.MenuScreen.name) {
-            MenuScreen(navController = navController, viewModel = koinViewModel())
-        }
-
-        composable(Screens.HappyEffects.name) {
-            HappyEffectsScreen(navController = navController, viewModel = koinViewModel())
-        }
-        composable(Screens.NeutralEffects.name) {
-            NeutralEffectsScreen(navController = navController, viewModel = koinViewModel())
-        }
-        composable(Screens.SadEffects.name) {
-            SadEffectsScreen(navController = navController, viewModel = koinViewModel())
         }
 
         composable(Screens.SavedDays.name) {
@@ -77,18 +65,6 @@ fun MoodNavigation() {
 
         composable(Screens.AboutScreen.name) {
             AboutScreen(navController = navController)
-        }
-
-        composable(Screens.DayGraphScreen.name + "/{id}",
-            arguments = listOf(
-                navArgument(name = "id") { type = NavType.StringType }
-            )
-        ) {
-            DayGraphScreen(
-                navController = navController,
-                id = it.arguments?.getString("id"),
-                koinViewModel()
-            )
         }
 
         composable(Screens.DonateScreen.name) {
@@ -118,8 +94,28 @@ fun MoodNavigation() {
             DaysGraphOverviewScreen(navController = navController, viewModel = koinViewModel())
         }
 
-        composable(Screens.DaysCalendarOverView.name){
-            DaysCalendarOverView(navController = navController, viewModel = koinViewModel())
+//        composable(Screens.DaysCalendarOverView.name){
+//            DaysCalendarOverView(navController = navController, viewModel = koinViewModel())
+//        }
+        composable(Screens.AllEffectsScreen.name) {
+            AllEffectsScreen(navController = navController, viewModel = koinViewModel())
+        }
+
+        composable(Screens.DaySettingsScreen.name+"/{id}",
+            arguments = listOf(
+                navArgument(name = "id"){type = NavType.StringType}
+            )
+            ){
+            DaySettingsScreen(
+                navController,
+                koinViewModel(),
+                it.arguments?.getString("id")
+            )
+        }
+
+
+        composable(Screens.SettingsScreen.name){
+            SettingsScreen(navController = navController, viewModel = koinViewModel())
         }
     }
 }

@@ -125,6 +125,26 @@ fun DonateScreen(
                 Text(text = "Copy Tether (USDT) Address")
             }
 
+            OutlinedButton(
+                onClick = {
+                    clipboard.setText(AnnotatedString(Constants.ton_address))
+                    scope.launch {
+                        snackBarHost.showSnackbar(
+                            message = "Address Copied",
+                            withDismissAction = true,
+                            duration = SnackbarDuration.Long,
+                            actionLabel = null
+                        )
+                    }
+                },
+                shape = RoundedCornerShape(5.dp),
+                modifier = Modifier.padding(top = 8.dp, start = 32.dp, end = 32.dp)
+                    .fillMaxWidth()
+
+            ) {
+                Text(text = "Copy TON Address")
+            }
+
         }
         SnackbarHost(
             hostState = snackBarHost,

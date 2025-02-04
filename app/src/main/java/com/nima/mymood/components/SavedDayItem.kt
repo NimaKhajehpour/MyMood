@@ -2,6 +2,8 @@ package com.nima.mymood.components
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -67,6 +69,81 @@ fun SavedDayItem(
                 onClick(id)
             }) {
                 Text(text = "See Effects")
+            }
+        }
+    }
+}
+
+@Composable
+fun SavedDayItem(
+    day: Int,
+    month: Int,
+    year: Int,
+    rate: Int,
+    red: Int,
+    green: Int,
+    blue: Int,
+    onSettingsClicked: () -> Unit,
+    onClick: () -> Unit
+) {
+
+    OutlinedCard (
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp),
+        onClick = {
+            onClick()
+        }
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Start,
+        ) {
+            if (rate != -1){
+                Icon(
+                    painter = painterResource(
+                        id =
+                        when (rate) {
+                            0 -> R.drawable.ic_outline_sentiment_very_satisfied_24
+                            1 -> R.drawable.ic_outline_sentiment_satisfied_alt_24
+                            2 -> R.drawable.ic_outline_sentiment_neutral_24
+                            3 -> R.drawable.ic_outline_sentiment_dissatisfied_24
+                            else -> R.drawable.ic_outline_sentiment_very_dissatisfied_24
+                        }
+                    ), contentDescription = null,
+                    tint = Color(red = red, green = green, blue = blue),
+                    modifier = Modifier
+                        .size(40.dp)
+                )
+            }
+
+            Column (
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.Start,
+                modifier = Modifier.padding(start = 10.dp)
+            ){
+                Text(
+                    text = "${Calculate.calculateMonthName(month)} " +
+                            "$day $year",
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+                Text(
+                    text = "Tap to open",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+            }
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            IconButton( onClick = {
+                onSettingsClicked()
+            }) {
+                Icon(imageVector = Icons.Default.Settings, contentDescription = null)
             }
         }
     }

@@ -42,152 +42,93 @@ fun AboutScreen(
     val context = LocalContext.current as Activity
 
     Box{
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 8.dp)
-                .verticalScroll(rememberScrollState()),
+
+        Column (
+            modifier = Modifier.align(Alignment.Center),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ){
+            Text(
+                text = "MyMood",
+                style = MaterialTheme.typography.displayMedium,
+                modifier = Modifier.padding(bottom = 16.dp)
+            )
+
+            Text(
+                text = "Write down Your mood changes, it will help!",
+                style = MaterialTheme.typography.bodyMedium,
+            )
+        }
+
+        Column (
+            modifier = Modifier.align(Alignment.BottomCenter)
+                .padding(bottom = 8.dp),
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
-        ) {
+        ){
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp, horizontal = 32.dp),
+                modifier = Modifier.padding(bottom = 8.dp),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center
+                horizontalArrangement = Arrangement.SpaceAround
             ) {
-                Text(
-                    text = "MyMood",
-                    style = MaterialTheme.typography.headlineLarge,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(end = 15.dp)
-                )
+                IconButton(
+                    onClick = {
+                        val browserIntent = Intent(Intent.ACTION_VIEW)
+                        browserIntent.data = Uri.parse("https://www.github.com/NimaKhajehpour")
+                        context.startActivity(browserIntent)
+                    },
+                    modifier = Modifier
+                        .padding(vertical = 8.dp, horizontal = 32.dp)
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.github_mark),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(32.dp),
+                    )
+                }
 
-                Badge {
-                    Text(
-                        text = "V${BuildConfig.VERSION_NAME}",
-                        style = MaterialTheme.typography.bodyLarge,
-                        fontWeight = FontWeight.Light,
+                IconButton(
+                    onClick = {
+                        val browserIntent = Intent(Intent.ACTION_VIEW)
+                        browserIntent.data =
+                            Uri.parse("https://t.me/+bwYZeynt5JNkMDdk")
+                        context.startActivity(browserIntent)
+                    },
+                    modifier = Modifier
+                        .padding(vertical = 8.dp, horizontal = 32.dp),
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.telegram_logo),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(32.dp),
+                    )
+                }
+
+                IconButton(
+                    onClick = {
+                        val browserIntent = Intent(Intent.ACTION_VIEW)
+                        browserIntent.data =
+                            Uri.parse("https://discord.gg/6fq6MvX3fG")
+                        context.startActivity(browserIntent)
+                    },
+                    modifier = Modifier
+                        .padding(vertical = 8.dp, horizontal = 32.dp),
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.discord_icon),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(32.dp),
                     )
                 }
             }
 
             Text(
-                text = "A simple and minimalistic mood tracking app to help you track what affected your mood and day.",
-                style = MaterialTheme.typography.bodyMedium,
-                fontWeight = FontWeight.Light,
-                modifier = Modifier.padding(vertical = 8.dp, horizontal = 32.dp)
+                text = "Version ${BuildConfig.VERSION_NAME}",
+                style = MaterialTheme.typography.bodyLarge,
             )
-
-            Divider(
-                thickness = 3.dp,
-                modifier = Modifier.padding(vertical = 8.dp, horizontal = 32.dp)
-            )
-
-            Button(
-                onClick = {
-                    val browserIntent = Intent(Intent.ACTION_VIEW)
-                    browserIntent.data = Uri.parse("https://www.github.com/NimaKhajehpour/MyMood")
-                    context.startActivity(browserIntent)
-                },
-                shape = RoundedCornerShape(5.dp),
-                colors = ButtonDefaults.buttonColors(
-                    contentColor = MaterialTheme.colorScheme.onTertiaryContainer,
-                    containerColor = MaterialTheme.colorScheme.tertiaryContainer
-                ),
-                modifier = Modifier
-                    .padding(vertical = 8.dp, horizontal = 32.dp)
-                    .fillMaxWidth()
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.github_mark),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .padding(end = 10.dp)
-                        .size(32.dp),
-                    tint = Color.White
-                )
-
-                Text(text = "See App Repository")
-            }
-
-            Button(
-                onClick = {
-                    val browserIntent = Intent(Intent.ACTION_VIEW)
-                    browserIntent.data = Uri.parse("https://www.github.com/NimaKhajehpour")
-                    context.startActivity(browserIntent)
-                },
-                shape = RoundedCornerShape(5.dp),
-                colors = ButtonDefaults.buttonColors(
-                    contentColor = MaterialTheme.colorScheme.onTertiaryContainer,
-                    containerColor = MaterialTheme.colorScheme.tertiaryContainer
-                ),
-                modifier = Modifier
-                    .padding(vertical = 8.dp, horizontal = 32.dp)
-                    .fillMaxWidth()
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.github_mark),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .padding(end = 10.dp)
-                        .size(32.dp),
-                    tint = Color.White
-                )
-
-                Text(text = "Made by: Nima Khajehpour")
-            }
-
-            Button(
-                onClick = {
-                    val browserIntent = Intent(Intent.ACTION_VIEW)
-                    browserIntent.data =
-                        Uri.parse("https://www.github.com/NimaKhajehpour/MyMood/issues")
-                    context.startActivity(browserIntent)
-                },
-                shape = RoundedCornerShape(5.dp),
-                modifier = Modifier
-                    .padding(vertical = 8.dp, horizontal = 32.dp)
-                    .fillMaxWidth()
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_baseline_bug_report_24),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .padding(end = 10.dp)
-                        .size(32.dp)
-                )
-
-                Text(text = "Report a bug/Request features")
-            }
-
-            Button(
-                onClick = {
-                    val browserIntent = Intent(Intent.ACTION_VIEW)
-                    browserIntent.data =
-                        Uri.parse("https://t.me/+bwYZeynt5JNkMDdk")
-                    context.startActivity(browserIntent)
-                },
-                shape = RoundedCornerShape(5.dp),
-                modifier = Modifier
-                    .padding(vertical = 8.dp, horizontal = 32.dp)
-                    .fillMaxWidth(),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFF2AABEE)
-                )
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.telegram_logo),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .padding(end = 10.dp)
-                        .size(32.dp),
-                    tint = Color.White
-                )
-
-                Text(text = "Join Telegram Group")
-            }
         }
     }
 }

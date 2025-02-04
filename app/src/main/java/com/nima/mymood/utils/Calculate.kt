@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -11,18 +12,6 @@ import com.nima.mymood.R
 import com.nima.mymood.ui.theme.*
 
 object Calculate {
-
-    fun calculateDayName(day: Int): String =
-        when(day){
-            1 -> "Sun"
-            2 -> "Mon"
-            3 -> "Tue"
-            4 -> "Wed"
-            5 -> "Thu"
-            6 -> "Fri"
-            7 -> "Sat"
-            else -> ""
-        }
 
     fun calculateMonthName(month: Int): String =
         when(month){
@@ -69,6 +58,39 @@ object Calculate {
             else -> Icon(painter = painterResource(id = R.drawable.ic_outline_sentiment_very_dissatisfied_24),
                 contentDescription = null,
                 tint = very_dissatisfied,
+                modifier = Modifier.size(size)
+
+            )
+        }
+
+    @Composable
+    fun calculateIconWithRate(rate: Int, size: Dp = 24.dp, red: Int, green: Int, blue: Int)=
+        when(rate){
+            0 -> Icon(painter = painterResource(id = R.drawable.ic_outline_sentiment_very_satisfied_24),
+                contentDescription = null,
+                tint = Color(red = red, green = green, blue = blue),
+                modifier = Modifier.size(size)
+            )
+            1 -> Icon(painter = painterResource(id = R.drawable.ic_outline_sentiment_satisfied_alt_24),
+                contentDescription = null,
+                tint = Color(red = red, green = green, blue = blue),
+                modifier = Modifier.size(size)
+            )
+            2 -> Icon(painter = painterResource(id = R.drawable.ic_outline_sentiment_neutral_24),
+                contentDescription = null,
+                tint = Color(red = red, green = green, blue = blue),
+                modifier = Modifier.size(size)
+
+            )
+            3 -> Icon(painter = painterResource(id = R.drawable.ic_outline_sentiment_dissatisfied_24),
+                contentDescription = null,
+                tint = Color(red = red, green = green, blue = blue),
+                modifier = Modifier.size(size)
+
+            )
+            else -> Icon(painter = painterResource(id = R.drawable.ic_outline_sentiment_very_dissatisfied_24),
+                contentDescription = null,
+                tint = Color(red = red, green = green, blue = blue),
                 modifier = Modifier.size(size)
 
             )

@@ -1,18 +1,23 @@
 package com.nima.mymood.screens
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.BottomSheetScaffold
@@ -20,10 +25,12 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberBottomSheetScaffoldState
@@ -37,6 +44,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
@@ -46,7 +54,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.nima.mymood.R
-import com.nima.mymood.components.DaySelectItem
+import com.nima.mymood.components.DayLazyItem
+import com.nima.mymood.components.EffectsListItem
 import com.nima.mymood.graph.DataPoint
 import com.nima.mymood.graph.GraphLine
 import com.nima.mymood.graph.LineGraph
@@ -58,6 +67,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.util.UUID
 
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DaysGraphOverviewScreen(
@@ -95,58 +105,25 @@ fun DaysGraphOverviewScreen(
             sheetContent = {
                 Column(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .verticalScroll(rememberScrollState()),
+                        .fillMaxWidth(),
                     verticalArrangement = Arrangement.Top,
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
-                    Row(
+                    LazyColumn(
                         modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.End
+                        contentPadding = PaddingValues(vertical = 16.dp, horizontal = 32.dp),
+                        verticalArrangement = Arrangement.Top,
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        IconButton(
-                            onClick = {
-                                scope.launch {
-                                    scaffoldState.bottomSheetState.hide()
-                                }
-                            },
-                            modifier = Modifier.padding(end = 8.dp)
-                        ) {
-                            Icon(imageVector = Icons.Default.Close, contentDescription = null)
-                        }
-                    }
-                    allDays.forEach { day ->
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-//                                .padding(vertical = 5.dp, horizontal = 16.dp)
-                                .selectable(
-                                    selected = selectedDays.contains(day.id),
-                                    role = Role.Checkbox
-                                ) {
-                                    if (selectedDays.contains(day.id)) {
-                                        selectedDays.remove(day.id)
-                                        days.removeAll {
-                                            it.first == day.id
-                                        }
-                                    } else {
-                                        selectedDays.add(day.id)
-                                        scope.launch {
-                                            viewModel
-                                                .getEffectsBuFK(day.id)
-                                                .collectLatest {
-                                                    it.forEach {effect ->
-                                                        days.add(day.id to effect)
-                                                    }
-                                                }
-                                        }
-                                    }
-                                },
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceAround
-                        ) {
-                            Checkbox(checked = selectedDays.contains(day.id), onCheckedChange = {
+                        items(items = allDays, key = {
+                            it.id
+                        }){ day ->
+                            DayLazyItem(
+                                selected = selectedDays.contains(day.id),
+                                month = day.month,
+                                day = day.day,
+                                year = day.year
+                            ) {
                                 if (selectedDays.contains(day.id)) {
                                     selectedDays.remove(day.id)
                                     days.removeAll {
@@ -164,188 +141,127 @@ fun DaysGraphOverviewScreen(
                                             }
                                     }
                                 }
-                            })
-                            DaySelectItem(date = "${Calculate.calculateMonthName(day.month)} ${day.day} ${day.year}")
+                            }
                         }
                     }
                 }
             },
             modifier = Modifier.fillMaxSize(),
             scaffoldState = scaffoldState,
-            sheetShape = RoundedCornerShape(15.dp),
-            sheetSwipeEnabled = true
+            sheetSwipeEnabled = true,
+            containerColor = Color.Transparent
         ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .verticalScroll(rememberScrollState()),
-                verticalArrangement = Arrangement.Top,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Button(
-                    onClick = {
-                        scope.launch {
-                            scaffoldState.bottomSheetState.expand()
-                        }
-                    },
-                    modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp)
+            Scaffold(
+                floatingActionButton = {
+                    ExtendedFloatingActionButton (
+                        onClick = {
+                            scope.launch {
+                                scaffoldState.bottomSheetState.expand()
+                            }
+                        },
+                        containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                        contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                    ) {
+                        Icon(imageVector = Icons.Default.Add, contentDescription = null)
+                        Text("Add Day", modifier = Modifier.padding(start = 10.dp))
+                    }
+                },
+                modifier = Modifier.fillMaxWidth(),
+                containerColor = Color.Transparent
+            ){
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    verticalArrangement = Arrangement.Top,
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Text(text = "Select Days")
-                }
 
-                if (!days.isNullOrEmpty()) {
-                    LineGraph(graphLine =
-                    GraphLine(
-                        lines =
-                        listOf(GraphLine.Line(
-                            days.mapIndexed { index, pair ->
-                                DataPoint(index + 1f, pair.second.rate.toFloat())
-                            },
-                            GraphLine.GraphConnection(
-                                MaterialTheme.colorScheme.primary,
-                                2.dp
+                    if (!days.isNullOrEmpty()) {
+                        LineGraph(graphLine =
+                        GraphLine(
+                            lines =
+                            listOf(GraphLine.Line(
+                                days.mapIndexed { index, pair ->
+                                    DataPoint(index + 1f, (pair.second.rate.toFloat()-4f)*-1f)
+                                },
+                                GraphLine.GraphConnection(
+                                    MaterialTheme.colorScheme.primary,
+                                    2.dp
+                                ),
+                                GraphLine.GraphIntersection(
+                                    MaterialTheme.colorScheme.primary,
+                                    5.dp
+                                ),
+                                highlight = GraphLine.GraphHighlight(
+                                    MaterialTheme.colorScheme.tertiary,
+                                    7.dp
+                                ),
+                            )),
+                            selection = GraphLine.GraphSelection(
+                                highlight = GraphLine.GraphConnection(
+                                    MaterialTheme.colorScheme.primary,
+                                    strokeWidth = 2.dp,
+                                )
                             ),
-                            GraphLine.GraphIntersection(
-                                MaterialTheme.colorScheme.primary,
-                                5.dp
-                            ),
-                            highlight = GraphLine.GraphHighlight(
-                                MaterialTheme.colorScheme.tertiary,
-                                7.dp
-                            ),
-                        )),
-                        selection = GraphLine.GraphSelection(
-                            highlight = GraphLine.GraphConnection(
-                                MaterialTheme.colorScheme.primary,
-                                strokeWidth = 2.dp,
-                            )
+                            paddingRight = 16.dp,
+                            yAxis = GraphLine.YAxis(
+                                steps = 5,
+                                content = { min, offset, max ->
+                                    for (step in (0 until 5)) {
+                                        val value = step * offset + min
+                                        Calculate.calculateIconWithRate(rate = (value.toInt()-4)*-1)
+                                    }
+                                }),
                         ),
-                        paddingRight = 16.dp,
-                        yAxis = GraphLine.YAxis(
-                            steps = 5,
-                            content = { min, offset, _ ->
-                                for (step in 0 until 5) {
-                                    val value = step * offset + min
-                                    Calculate.calculateIconWithRate(rate = value.toInt())
-                                }
-                            }),
-                    ),
 
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(200.dp),
-                        onSelection = { _, points ->
-                            pointsList.value = points
-                        }
-                    )
-
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 8.dp, bottom = 16.dp, start = 8.dp, end = 8.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceEvenly
-                    ) {
-                        Text(
-                            text = "Zoom",
-                            style = MaterialTheme.typography.labelSmall,
-                            fontWeight = FontWeight.ExtraLight
-                        )
-                        Text(
-                            text = "Pan",
-                            style = MaterialTheme.typography.labelSmall,
-                            fontWeight = FontWeight.ExtraLight
-                        )
-                        Text(
-                            text = "* Double Tap and drag for selection",
-                            style = MaterialTheme.typography.labelSmall,
-                            fontWeight = FontWeight.ExtraLight
-                        )
-                    }
-                }
-
-                if (pointsList.value.isNotEmpty()) {
-
-                    val effect = days[pointsList.value[0].x.toInt()-1].second
-                    val day = allDays.filter {
-                        it.id == days[pointsList.value[0].x.toInt()-1].first
-                    }.first()
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 8.dp, horizontal = 16.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.End
-                    ) {
-                        IconButton(onClick = {
-                            navController.navigate(Screens.EditScreen.name+"/${effect.id}")
-                        },
-                            modifier = Modifier.padding(end = 8.dp)
-                        ) {
-                            Icon(imageVector = Icons.Default.Edit, contentDescription = null,
-                                tint = MaterialTheme.colorScheme.tertiary
-                            )
-                        }
-                        OutlinedButton(onClick = {
-                            clipboard.setText(AnnotatedString(effect.description))
-                        },
-                            shape = RoundedCornerShape(5.dp)
-                        ) {
-                            Icon(painter = painterResource(id = R.drawable.ic_baseline_content_copy_24),
-                                contentDescription = null,
-                                modifier = Modifier.padding(end = 5.dp)
-                            )
-                            Text("Copy Description")
-                        }
-                    }
-
-                    ElevatedCard(
-                        shape = RoundedCornerShape(15.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 8.dp, horizontal = 32.dp)
-                    ){
-                        Column(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(8.dp),
-                            verticalArrangement = Arrangement.Top,
-                            horizontalAlignment = Alignment.CenterHorizontally
+                                .height(200.dp),
+                            onSelection = { _, points ->
+                                pointsList.value = points
+                            }
+                        )
+
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 8.dp, bottom = 16.dp, start = 8.dp, end = 8.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceEvenly
                         ) {
-                            Calculate.calculateIconWithRate(rate = effect.rate, size = 64.dp)
-
-                            SelectionContainer {
-                                Text(
-                                    text = effect.description,
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = MaterialTheme.colorScheme.tertiary,
-                                    textAlign = TextAlign.Center,
-                                    modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp)
-                                )
-                            }
-
-                            if (effect.hour.isNotBlank()){
-                                Text(
-                                    text = "Time: ${
-                                        String.format(
-                                            "%02d:%02d",
-                                            effect.hour.toInt(),
-                                            effect.minute.toInt()
-                                        )
-                                    }",
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = MaterialTheme.colorScheme.tertiary,
-                                    textAlign = TextAlign.Center,
-                                    modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp)
-                                )
-                            }
                             Text(
-                                text = "${Calculate.calculateMonthName(day.month)} ${day.day} ${day.year}",
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.tertiary,
-                                textAlign = TextAlign.Center,
-                                modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp)
+                                text = "Zoom",
+                                style = MaterialTheme.typography.labelSmall,
+                                fontWeight = FontWeight.ExtraLight
                             )
+                            Text(
+                                text = "Pan",
+                                style = MaterialTheme.typography.labelSmall,
+                                fontWeight = FontWeight.ExtraLight
+                            )
+                            Text(
+                                text = "* Double Tap and drag for selection",
+                                style = MaterialTheme.typography.labelSmall,
+                                fontWeight = FontWeight.ExtraLight
+                            )
+                        }
+                    }
+
+                    if (pointsList.value.isNotEmpty()) {
+
+                        val effect = days[pointsList.value[0].x.toInt()-1].second
+                        val day = allDays.filter {
+                            it.id == days[pointsList.value[0].x.toInt()-1].first
+                        }.first()
+                        EffectsListItem(
+                            effectRate = effect.rate,
+                            effectMinute = effect.minute,
+                            effectHour = effect.hour,
+                            effectDate = String.format("%02d/%02d/%4d", day.day, day.month, day.year),
+                            effectDescription = effect.description,
+                            modifier = Modifier.padding(bottom = 32.dp, start = 32.dp, end = 32.dp, top = 8.dp)
+                        ) {
+                            navController.navigate(Screens.EditScreen.name + "/${effect.id}")
                         }
                     }
                 }

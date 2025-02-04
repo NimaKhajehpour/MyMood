@@ -3,17 +3,15 @@ package com.nima.mymood.navigation
 enum class Screens {
     HomeScreen,
     TodayMoodScreen,
-    MenuScreen,
-    HappyEffects,
-    NeutralEffects,
-    SadEffects,
     SavedDays,
     DayScreen,
     AboutScreen,
-    DayGraphScreen,
     DonateScreen,
     EditScreen,
     DayCompareScreen,
     DaysGraphOverViewScreen,
-    DaysCalendarOverView
+    DaysCalendarOverView,
+    AllEffectsScreen,
+    DaySettingsScreen,
+    SettingsScreen
 }

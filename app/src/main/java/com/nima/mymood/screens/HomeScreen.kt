@@ -15,6 +15,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
@@ -48,7 +50,7 @@ import kotlinx.coroutines.runBlocking
 import java.util.*
 import androidx.compose.material3.TextField as TextField1
 
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "DefaultLocale")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
@@ -60,20 +62,14 @@ fun HomeScreen(
 
     val scope = rememberCoroutineScope()
 
-    val context = LocalContext.current
-
     val year by remember {
         mutableStateOf(calendar.get(Calendar.YEAR))
     }
     val month by remember {
-        mutableStateOf(calendar.get(Calendar.MONTH)+1)
+        mutableStateOf(calendar.get(Calendar.MONTH) + 1)
     }
     val day by remember {
         mutableStateOf(calendar.get(Calendar.DAY_OF_MONTH))
-    }
-
-    val dayOfWeek by remember{
-        mutableStateOf(calendar.get(Calendar.DAY_OF_WEEK))
     }
 
     var deleteEffect by remember {
@@ -84,15 +80,9 @@ fun HomeScreen(
         mutableStateOf(null)
     }
 
-    val today = produceState<Day?>(initialValue = null){
+    val today = produceState<Day?>(initialValue = null) {
         value = viewModel.getDayByDate(year, month, day)
     }.value
-
-    var showDatePicker by remember {
-        mutableStateOf(false)
-    }
-
-    val clipboard = LocalClipboardManager.current
 
     val datePickerState = rememberDatePickerState()
     datePickerState.displayMode = DisplayMode.Picker
@@ -102,8 +92,8 @@ fun HomeScreen(
             .fillMaxSize(),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
-    ){
-        if (deleteEffect){
+    ) {
+        if (deleteEffect) {
             AlertDialog(
                 onDismissRequest = {
                     deleteEffect = false
@@ -131,196 +121,86 @@ fun HomeScreen(
                     Icon(imageVector = Icons.Default.Delete, contentDescription = null)
                 },
                 text = {
-                    Text(text = "You are about to delete an effect from your day! Remember that effects will not be deleted from your life." +
-                            "\nDo you want to permanently delete this effect?")
+                    Text(
+                        text = "You are about to delete an effect from your day! Remember that effects will not be deleted from your life." +
+                                "\nDo you want to permanently delete this effect?"
+                    )
                 },
                 title = {
                     Text(text = "Delete Effect?")
                 }
             )
         }
-
-        if (showDatePicker){
-            DatePickerDialog(
-                onDismissRequest = {
-                    showDatePicker = false
-                    datePickerState.setSelection(null)
-                                   },
-                confirmButton = {
-                    TextButton(onClick = {
-                        // get date and go to mood editing
-                        val date = Date(datePickerState.selectedDateMillis!!)
-                        val selectedDay = date.date
-                        val selectedMonth = date.month+1
-                        val selectedYear = date.year+1900
-                        var selectedDate: Day? = null
-                        scope.launch {
-                            selectedDate = viewModel.getDayByDate(selectedYear, selectedMonth, selectedDay)
-                        }.invokeOnCompletion {
-                            if (selectedDate == null){
-                                val tempDay = Day(day = selectedDay, month = selectedMonth, year = selectedYear, red = "", green =  "", blue = "", rate = "")
-                                scope.launch {
-                                    viewModel.addDay(tempDay)
-                                }.invokeOnCompletion {
-                                    datePickerState.setSelection(null)
-                                    showDatePicker = false
-                                    navController.navigate(
-                                        Screens.TodayMoodScreen.name+"/${tempDay.id}")
-                                }
-                            }else{
-                                val dayId = selectedDate!!.id
-                                datePickerState.setSelection(null)
-                                showDatePicker = false
-                                navController.navigate(
-                                    Screens.TodayMoodScreen.name+"/${dayId}")
-                            }
-                        }
-                    },
-                        enabled = datePickerState.selectedDateMillis != null && datePickerState.selectedDateMillis!! <= calendar.timeInMillis,
-                        colors = ButtonDefaults.textButtonColors(
-                            contentColor = MaterialTheme.colorScheme.tertiary
-                        )
-                    ) {
-                        Text(text = "Edit Day")
-                    }
-                },
-                dismissButton = {
-                    TextButton(onClick = {
-                        showDatePicker = false
-                        datePickerState.setSelection(null)
-                    }) {
-                        Text(text = "Cancel")
-                    }
-                }
-            ) {
-                DatePicker(
-                    state = datePickerState,
-                    dateValidator = {
-                        it <= calendar.timeInMillis
-                    },
-                    showModeToggle = false
-                )
-            }
-        }
-
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp),
-        ) {
-            TextButton(
-                onClick = {
-                    showDatePicker = true
-                },
-                border = BorderStroke(2.dp, MaterialTheme.colorScheme.tertiaryContainer),
-                colors = ButtonDefaults.textButtonColors(
-                    contentColor = MaterialTheme.colorScheme.secondary
-                ),
-                modifier = Modifier.align(Alignment.Center)
-            ){
-                Text(
-                    text = "${Calculate.calculateDayName(dayOfWeek)} " +
-                            "${Calculate.calculateMonthName(month)} " +
-                            "$day $year",
-                    style = MaterialTheme.typography.bodyLarge,
-                )
-            }
-
-            FilledIconButton(onClick = {
-                // go to moods menu
-                navController.navigate(Screens.MenuScreen.name)
-            },
-                modifier = Modifier
-                    .padding(end = 12.dp)
-                    .align(Alignment.CenterEnd)
-            ) {
-                Icon(imageVector = Icons.Default.ArrowForward, contentDescription = null)
-            }
-        }
-        when (today) {
-            null -> {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 64.dp),
-                    verticalArrangement = Arrangement.Top,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_outline_sentiment_very_dissatisfied_24),
-                        contentDescription = null,
-                        modifier = Modifier
-                            .size(96.dp)
-                            .padding(top = 16.dp, bottom = 10.dp),
-                        tint = Color.LightGray
-                    )
-                    Text(text = "No Entry For Today!",
-                        style = MaterialTheme.typography.bodySmall,
-                        fontWeight = FontWeight.Light,
-                        color = Color.LightGray,
-                        modifier = Modifier.padding(bottom = 8.dp)
-                    )
-                    ElevatedButton(onClick = {
-                        // today mood screen
-                        val tempDay = Day(
-                            day = day,
-                            month = month,
-                            year = year,
-                            red = "",
-                            green =  "",
-                            blue = "",
-                            rate = ""
-                        )
-                        runBlocking {
-                            launch {
+        Scaffold(
+            containerColor = MaterialTheme.colorScheme.surface,
+            floatingActionButton = {
+                FloatingActionButton(
+                    onClick = {
+                        if (today == null) {
+                            val tempDay = Day(
+                                day = day,
+                                month = month,
+                                year = year,
+                                red = "",
+                                green = "",
+                                blue = "",
+                                rate = ""
+                            )
+                            scope.launch {
                                 viewModel.addDay(tempDay)
+                            }.invokeOnCompletion {
+                                navController.navigate(Screens.TodayMoodScreen.name +"/"+ tempDay.id.toString())
                             }
+                        }else{
+                            navController.navigate(Screens.TodayMoodScreen.name + "/${today.id.toString()}")
                         }
-                        navController.navigate(
-                            Screens.TodayMoodScreen.name+"/${tempDay.id.toString()}")
                     },
-                        elevation = ButtonDefaults.elevatedButtonElevation(15.dp)
+                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                    contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+
                     ) {
-                        Text(text = "How Is Your Mood?")
-                    }
+                    Icon(Icons.Default.Add, contentDescription = null)
                 }
             }
-            else -> {
-
-                val effects = viewModel.getDayEffect(today.id).collectAsState(initial = emptyList())
-
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 16.dp, start = 16.dp, end = 16.dp, bottom = 32.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.End
-                ) {
-                    ElevatedButton(onClick = {
-                        // go to edit
-                        navController.navigate(Screens.TodayMoodScreen.name+"/${today.id.toString()}")
-                    },
-                        shape = RoundedCornerShape(5.dp),
-                        elevation = ButtonDefaults.elevatedButtonElevation(15.dp)
-                    ) {
-                        Icon(imageVector = Icons.Outlined.Edit, contentDescription = null)
-                    }
-                }
-
-                if (effects.value.isNotEmpty()){
-
+        ) {
+            when (today) {
+                null -> {
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(horizontal = 16.dp),
+                            .padding(top = 64.dp),
                         verticalArrangement = Arrangement.Top,
-                        horizontalAlignment = Alignment.Start
-                    ){
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_outline_sentiment_very_dissatisfied_24),
+                            contentDescription = null,
+                            modifier = Modifier
+                                .size(116.dp)
+                                .padding(top = 16.dp, bottom = 10.dp),
+                            tint = Color.Gray
+                        )
+                        Text(
+                            text = "Nothing to see for today!",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Light,
+                            color = Color.Gray,
+                            modifier = Modifier.padding(bottom = 8.dp)
+                        )
+                    }
+                }
+
+                else -> {
+                    val effects =
+                        viewModel.getDayEffect(today.id).collectAsState(initial = emptyList())
+
+                    if (effects.value.isNotEmpty()) {
                         LazyColumn(
                             modifier = Modifier.fillMaxWidth(),
                             verticalArrangement = Arrangement.Top,
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ){
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            contentPadding = PaddingValues(vertical = 16.dp, horizontal = 32.dp)
+                        ) {
                             items(items = effects.value, key = {
                                 it.id
                             }) {
@@ -329,30 +209,43 @@ fun HomeScreen(
                                     it.description,
                                     effectHour = it.hour,
                                     effectMinute = it.minute,
-                                    onLongPress = {
-                                        effectToDelete = it
-                                        deleteEffect = true
-                                },
-                                    onDoubleTap = {
+                                    effectDate = String.format("%02d/%02d/%4d", day, month, year),
+                                    onEditClicked = {
                                         navController.navigate(Screens.EditScreen.name+"/${it.id}")
                                     },
-                                    onCopyClicked = {
-                                        clipboard.setText(AnnotatedString(it.description))
-                                        Toast.makeText(context, "Description Copied!", Toast.LENGTH_LONG).show()
+                                    onDeleteClicked = {
+                                        deleteEffect = true
+                                        effectToDelete = it
                                     }
-                            )
+                                )
                             }
                         }
+
+                    } else {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 64.dp),
+                            verticalArrangement = Arrangement.Top,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_outline_sentiment_very_dissatisfied_24),
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .size(116.dp)
+                                    .padding(top = 16.dp, bottom = 10.dp),
+                                tint = Color.Gray
+                            )
+                            Text(
+                                text = "Nothing to see for today!",
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.Light,
+                                color = Color.Gray,
+                                modifier = Modifier.padding(bottom = 8.dp)
+                            )
+                        }
                     }
-
-                }
-
-                else{
-                    Text(text = "Nothing Here Yet!",
-                        style = MaterialTheme.typography.bodyLarge,
-                        fontWeight = FontWeight.Light,
-                        color = Color.LightGray
-                    )
                 }
             }
         }
