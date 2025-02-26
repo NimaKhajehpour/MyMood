@@ -1,0 +1,5 @@
+in this update:
+UI Improvements:
+- changed the whole UI for a better one
+bug fixes:
+- bugs #45, #44, #41, #40, #37, #36 fixed and issues resolved

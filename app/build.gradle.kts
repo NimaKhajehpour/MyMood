@@ -36,12 +36,19 @@ android {
     namespace = "com.nima.mymood"
     compileSdk = 35
 
+    dependenciesInfo {
+        // Disables dependency metadata when building APKs.
+        includeInApk = false
+        // Disables dependency metadata when building Android App Bundles.
+        includeInBundle = false
+    }
+
     defaultConfig {
         applicationId = "com.nima.mymood"
         minSdk = 21
         targetSdk = 33
-        versionCode = 11
-        versionName = "2.0"
+        versionCode = 12
+        versionName = "2.0.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
