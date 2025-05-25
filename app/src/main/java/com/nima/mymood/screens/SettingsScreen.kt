@@ -53,6 +53,7 @@ import com.nima.mymood.R
 import com.nima.mymood.ThemeDataStore
 import com.nima.mymood.model.Day
 import com.nima.mymood.model.Effect
+import com.nima.mymood.navigation.Screens
 import com.nima.mymood.utils.ExportManager
 import com.nima.mymood.utils.importDataFromUri
 import com.nima.mymood.viewmodels.SettingsViewModel
@@ -78,6 +79,7 @@ fun SettingsScreen(
     val scope = rememberCoroutineScope()
     val themeDataStore = ThemeDataStore(context)
     val isDark = themeDataStore.getTheme.collectAsState(false).value
+    val hasPasscode = themeDataStore.hasPasscode.collectAsState(null).value
 
     var isGrantedExport by remember {
         mutableStateOf(false)
@@ -167,6 +169,15 @@ fun SettingsScreen(
                 ) {
                     Text(text = "Light Theme")
                 }
+            }
+            Button(
+                modifier = Modifier.fillMaxWidth()
+                    .padding(horizontal = 32.dp, vertical = 16.dp),
+                onClick = {
+                    navController.navigate(Screens.SetPinScreen.name)
+                }
+            ) {
+                Text("Set/Change Passcode")
             }
             Button(
                 modifier = Modifier.fillMaxWidth()

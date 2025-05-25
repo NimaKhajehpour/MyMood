@@ -21,6 +21,7 @@ import com.nima.mymood.screens.DonateScreen
 import com.nima.mymood.screens.EditScreen
 import com.nima.mymood.screens.HomeScreen
 import com.nima.mymood.screens.SaveDaysScreen
+import com.nima.mymood.screens.SetPinScreen
 import com.nima.mymood.screens.SettingsScreen
 import com.nima.mymood.screens.TodayMoodScreen
 import org.koin.androidx.compose.koinViewModel
@@ -116,6 +117,10 @@ fun MoodNavigation(navController: NavHostController) {
 
         composable(Screens.SettingsScreen.name){
             SettingsScreen(navController = navController, viewModel = koinViewModel())
+        }
+
+        composable(Screens.SetPinScreen.name){
+            SetPinScreen(navController)
         }
     }
 }

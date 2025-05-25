@@ -13,5 +13,6 @@ enum class Screens {
     DaysCalendarOverView,
     AllEffectsScreen,
     DaySettingsScreen,
-    SettingsScreen
+    SettingsScreen,
+    SetPinScreen
 }

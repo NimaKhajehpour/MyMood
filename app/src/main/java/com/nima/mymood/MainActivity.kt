@@ -14,6 +14,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -23,12 +25,15 @@ import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.view.WindowCompat
 import androidx.navigation.compose.rememberNavController
+import com.nima.mymood.navigation.MainNavigation
 import com.nima.mymood.navigation.MoodNavigation
 import com.nima.mymood.screens.AboutScreen
 import com.nima.mymood.screens.MainScreen
 import com.nima.mymood.ui.theme.MyMoodTheme
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectIndexed
+import kotlinx.coroutines.flow.last
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
@@ -36,16 +41,19 @@ class MainActivity : ComponentActivity() {
     @SuppressLint("CoroutineCreationDuringComposition")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
         setContent {
             val context = LocalContext.current
             val scope = rememberCoroutineScope()
             val themeDataStore = ThemeDataStore(context)
             val theme = themeDataStore.getTheme.collectAsState(null).value
-            if (theme != null) {
+            val hasPasscode by produceState<Boolean?>(initialValue = null) {
+                value = themeDataStore.hasPasscode.firstOrNull()
+            }
+            if (theme != null && hasPasscode != null) {
                 runBlocking {
                     delay(1500)
                 }
-//                enableEdgeToEdge()
                 MyMoodTheme(
                     darkTheme = theme,
                     dynamicColor = false
@@ -61,7 +69,7 @@ class MainActivity : ComponentActivity() {
                         modifier = Modifier.fillMaxSize(),
                         color = MaterialTheme.colorScheme.surface
                     ) {
-                        MainScreen()
+                        MainNavigation(hasPasscode!!)
                     }
                 }
             }else{
