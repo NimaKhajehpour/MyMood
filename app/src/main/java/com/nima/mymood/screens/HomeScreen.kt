@@ -45,13 +45,21 @@ import com.nima.mymood.navigation.Screens
 import com.nima.mymood.ui.theme.*
 import com.nima.mymood.utils.Calculate
 import com.nima.mymood.viewmodels.HomeViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.channels.produce
+import kotlinx.coroutines.channels.toList
+import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import java.time.Instant
+import java.time.LocalDate
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 import java.util.*
 import androidx.compose.material3.TextField as TextField1
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "DefaultLocale")
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalCoroutinesApi::class)
 @Composable
 fun HomeScreen(
     navController: NavController,
@@ -84,8 +92,76 @@ fun HomeScreen(
         value = viewModel.getDayByDate(year, month, day)
     }.value
 
-    val datePickerState = rememberDatePickerState()
-    datePickerState.displayMode = DisplayMode.Picker
+    val todayMillis =
+        remember { LocalDate.now().atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli() }
+
+    val datePickerState = rememberDatePickerState(initialSelectedDateMillis = todayMillis,
+        initialDisplayMode = DisplayMode.Picker,
+        selectableDates = object : SelectableDates {
+            override fun isSelectableDate(utcTimeMillis: Long): Boolean {
+                val selectedDate = Instant.ofEpochMilli(utcTimeMillis)
+                    .atZone(ZoneId.systemDefault())
+                    .toLocalDate()
+                return !selectedDate.isAfter(LocalDate.now()) // Disable future dates
+            }
+        }
+    )
+
+    var createDay by remember {
+        mutableStateOf(false)
+    }
+
+    if (createDay) {
+        DatePickerDialog(
+            onDismissRequest = {
+                createDay = false
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        scope.launch{
+                            datePickerState.selectedDateMillis?.let { millis ->
+                                val formattedDate = Instant.ofEpochMilli(millis)
+                                    .atZone(ZoneId.systemDefault())
+                                    .toLocalDate()
+                                    .format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) // Format here
+                                val date = formattedDate.split("/")
+                                val exists = viewModel.getDayByDate(
+                                    date[2].toInt(),
+                                    date[1].toInt(),
+                                    date[0].toInt()
+                                )
+                                if (exists != null) {
+                                    createDay = false
+                                    navController.navigate(Screens.TodayMoodScreen.name + "/" + exists.id.toString())
+                                    return@launch
+                                }
+                                val tempDay = Day(
+                                    year = date[2].toInt(),
+                                    month = date[1].toInt(),
+                                    day = date[0].toInt(),
+                                    rate = "",
+                                    red = "",
+                                    green = "",
+                                    blue = ""
+                                )
+                                scope.launch {
+                                    viewModel.addDay(tempDay)
+                                }.invokeOnCompletion {
+                                    navController.navigate(Screens.TodayMoodScreen.name + "/" + tempDay.id.toString())
+                                }
+                                createDay = false
+                            }
+                        }
+                    }
+                ) {
+                    Text("Confirm")
+                }
+            },
+        ) {
+            DatePicker(state = datePickerState, showModeToggle = false)
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -136,24 +212,7 @@ fun HomeScreen(
             floatingActionButton = {
                 FloatingActionButton(
                     onClick = {
-                        if (today == null) {
-                            val tempDay = Day(
-                                day = day,
-                                month = month,
-                                year = year,
-                                red = "",
-                                green = "",
-                                blue = "",
-                                rate = ""
-                            )
-                            scope.launch {
-                                viewModel.addDay(tempDay)
-                            }.invokeOnCompletion {
-                                navController.navigate(Screens.TodayMoodScreen.name +"/"+ tempDay.id.toString())
-                            }
-                        }else{
-                            navController.navigate(Screens.TodayMoodScreen.name + "/${today.id.toString()}")
-                        }
+                        createDay = true
                     },
                     containerColor = MaterialTheme.colorScheme.secondaryContainer,
                     contentColor = MaterialTheme.colorScheme.onSecondaryContainer,

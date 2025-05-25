@@ -15,7 +15,7 @@ import java.util.*
 @Dao
 interface MoodDao {
 
-    @Insert(onConflict = OnConflictStrategy.ABORT)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun addDay(day: Day)
 
     @Insert(onConflict = OnConflictStrategy.ABORT)
