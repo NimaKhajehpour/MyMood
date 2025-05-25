@@ -47,8 +47,8 @@ android {
         applicationId = "com.nima.mymood"
         minSdk = 21
         targetSdk = 33
-        versionCode = 12
-        versionName = "2.0.1"
+        versionCode = 13
+        versionName = "2.1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true

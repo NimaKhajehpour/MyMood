@@ -1,0 +1,3 @@
+- added passcode for more privacy on local device
+- made date picker on home screen so now user can select which day to create again
+- fixed bug to that there would be more than one instance of a page
