@@ -15,7 +15,7 @@ fun MoodNavigationDrawerItem(
 ) {
     NavigationDrawerItem(
         label = {
-            Text(label, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text(label)
         },
         onClick = onClick,
         selected = selected

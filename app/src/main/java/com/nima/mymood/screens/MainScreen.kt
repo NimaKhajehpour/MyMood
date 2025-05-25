@@ -82,7 +82,9 @@ fun MainScreen(
                         scope.launch {
                             drawerState.close()
                         }
-                        navController.navigate(Screens.AllEffectsScreen.name)
+                        navController.navigate(Screens.AllEffectsScreen.name){
+                            launchSingleTop = true
+                        }
 
                     }
                     MoodNavigationDrawerItem(
@@ -92,7 +94,9 @@ fun MainScreen(
                         scope.launch {
                             drawerState.close()
                         }
-                        navController.navigate(Screens.SavedDays.name)
+                        navController.navigate(Screens.SavedDays.name){
+                            launchSingleTop = true
+                        }
                     }
                     MoodNavigationDrawerItem(
                         label = "Compare Days",
@@ -101,7 +105,9 @@ fun MainScreen(
                         scope.launch {
                             drawerState.close()
                         }
-                        navController.navigate(Screens.DayCompareScreen.name)
+                        navController.navigate(Screens.DayCompareScreen.name){
+                            launchSingleTop = true
+                        }
                     }
                     MoodNavigationDrawerItem(
                         label = "Graph Overview",
@@ -110,7 +116,9 @@ fun MainScreen(
                         scope.launch {
                             drawerState.close()
                         }
-                        navController.navigate(Screens.DaysGraphOverViewScreen.name)
+                        navController.navigate(Screens.DaysGraphOverViewScreen.name){
+                            launchSingleTop = true
+                        }
                     }
                     MoodNavigationDrawerItem(
                         label = "Donate",
@@ -119,7 +127,9 @@ fun MainScreen(
                         scope.launch {
                             drawerState.close()
                         }
-                        navController.navigate(Screens.DonateScreen.name)
+                        navController.navigate(Screens.DonateScreen.name){
+                            launchSingleTop = true
+                        }
                     }
                     MoodNavigationDrawerItem(
                         label = "About",
@@ -128,7 +138,9 @@ fun MainScreen(
                         scope.launch {
                             drawerState.close()
                         }
-                        navController.navigate(Screens.AboutScreen.name)
+                        navController.navigate(Screens.AboutScreen.name){
+                            launchSingleTop = true
+                        }
                     }
                 }
             }
@@ -167,7 +179,9 @@ fun MainScreen(
                     actions = {
                         IconButton(
                             onClick = {
-                                navController.navigate(Screens.SettingsScreen.name)
+                                navController.navigate(Screens.SettingsScreen.name){
+                                    launchSingleTop = true
+                                }
                             },
                             colors = IconButtonDefaults.iconButtonColors(
                                 contentColor = MaterialTheme.colorScheme.onSurface,
