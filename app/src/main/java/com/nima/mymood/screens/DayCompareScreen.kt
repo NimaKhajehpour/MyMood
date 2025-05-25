@@ -2,6 +2,7 @@ package com.nima.mymood.screens
 
 import android.annotation.SuppressLint
 import android.util.Log
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.gestures.FlingBehavior
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.Arrangement
@@ -44,11 +45,13 @@ import androidx.compose.material3.rememberStandardBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -73,12 +76,14 @@ import com.nima.mymood.navigation.Screens
 import com.nima.mymood.utils.Calculate
 import com.nima.mymood.viewmodels.DayCompareViewModel
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.launch
 import java.util.UUID
 import kotlin.random.Random
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "DefaultLocale")
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun DayCompareScreen(
     navController: NavController,
@@ -86,6 +91,10 @@ fun DayCompareScreen(
 ) {
 
     val allDays = viewModel.getAllDays().collectAsState(initial = null).value
+
+    var allDaysCheck by remember {
+        mutableStateOf(false)
+    }
 
     val scope = rememberCoroutineScope()
     val bottomSheetState = rememberStandardBottomSheetState(
@@ -106,7 +115,7 @@ fun DayCompareScreen(
     }
 
     val pointsList = remember {
-        mutableStateOf(emptyList<DataPoint>())
+        mutableStateListOf<DataPoint>()
     }
 
     if (!allDays.isNullOrEmpty()) {
@@ -118,6 +127,27 @@ fun DayCompareScreen(
                     verticalArrangement = Arrangement.Top,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
+                    stickyHeader {
+                        Button(
+                            onClick = {
+                                pointsList.clear()
+                                allDaysCheck = !allDaysCheck
+                                if (allDaysCheck){
+                                    selectedDays.addAll(allDays.map { it.id }.filter { !selectedDays.contains(it) })
+                                    selectedDays.parallelStream().forEach {
+                                        scope.launch {
+                                            days[it] = viewModel.getEffectsBuFK(it).first()
+                                        }
+                                    }
+                                }else{
+                                    selectedDays.clear()
+                                    days.clear()
+                                }
+                            }
+                        ) {
+                            Text(if (allDaysCheck) "Unselect All Days" else "Select AllSays")
+                        }
+                    }
                     items(items = allDays, key = {
                         it.id
                     }){ day ->
@@ -127,6 +157,7 @@ fun DayCompareScreen(
                             day = day.day,
                             year = day.year
                         ) {
+                            pointsList.clear()
                             if (selectedDays.contains(day.id)) {
                                 selectedDays.remove(day.id)
                                 days.remove(day.id)
@@ -217,7 +248,7 @@ fun DayCompareScreen(
                                 .fillMaxWidth()
                                 .height(200.dp),
                             onSelection = { _, points ->
-                                pointsList.value = points
+                                pointsList.addAll(points)
                             }
                         )
 
@@ -246,12 +277,12 @@ fun DayCompareScreen(
                         }
                     }
 
-                    if (pointsList.value.isNotEmpty()) {
-                        val effects = remember(pointsList.value) {
+                    if (pointsList.isNotEmpty()) {
+                        val effects = remember(pointsList) {
                             mutableStateOf(days.values.filter {
-                                it.size >= pointsList.value[0].x.toInt()
+                                it.size >= pointsList[0].x.toInt()
                             }.map { effects ->
-                                effects[pointsList.value[0].x.toInt() - 1]
+                                effects[pointsList[0].x.toInt() - 1]
                             })
                         }
                         LazyColumn(

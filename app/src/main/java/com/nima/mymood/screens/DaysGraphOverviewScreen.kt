@@ -1,6 +1,7 @@
 package com.nima.mymood.screens
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -37,11 +38,13 @@ import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.material3.rememberStandardBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -64,17 +67,22 @@ import com.nima.mymood.navigation.Screens
 import com.nima.mymood.utils.Calculate
 import com.nima.mymood.viewmodels.DaysOverviewViewModel
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.util.UUID
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun DaysGraphOverviewScreen(
     navController: NavController,
     viewModel: DaysOverviewViewModel
 ){
     val allDays = viewModel.getAllDays().collectAsState(initial = null).value
+
+    var allDaysCheck by remember {
+        mutableStateOf(false)
+    }
 
     val clipboard = LocalClipboardManager.current
 
@@ -96,8 +104,8 @@ fun DaysGraphOverviewScreen(
         mutableStateListOf<Pair<UUID, Effect>>()
     }
 
-    val pointsList = remember {
-        mutableStateOf(emptyList<DataPoint>())
+    var pointsList = remember {
+        mutableStateListOf<DataPoint>()
     }
 
     if (!allDays.isNullOrEmpty()) {
@@ -115,6 +123,33 @@ fun DaysGraphOverviewScreen(
                         verticalArrangement = Arrangement.Top,
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
+                        stickyHeader {
+                            Button(
+                                onClick = {
+                                    pointsList.clear()
+                                    allDaysCheck = !allDaysCheck
+                                    if (allDaysCheck){
+                                        selectedDays.addAll(allDays.map { it.id }.filter { !selectedDays.contains(it) })
+                                        selectedDays.parallelStream().forEach {id->
+                                            scope.launch {
+                                                viewModel
+                                                    .getEffectsBuFK(id)
+                                                    .collectLatest {
+                                                        it.parallelStream().forEach {effect ->
+                                                            days.add(id to effect)
+                                                        }
+                                                    }
+                                            }
+                                        }
+                                    }else{
+                                        selectedDays.clear()
+                                        days.clear()
+                                    }
+                                }
+                            ) {
+                                Text(if (allDaysCheck) "Unselect All Days" else "Select AllSays")
+                            }
+                        }
                         items(items = allDays, key = {
                             it.id
                         }){ day ->
@@ -124,6 +159,7 @@ fun DaysGraphOverviewScreen(
                                 day = day.day,
                                 year = day.year
                             ) {
+                                pointsList.clear()
                                 if (selectedDays.contains(day.id)) {
                                     selectedDays.remove(day.id)
                                     days.removeAll {
@@ -218,7 +254,7 @@ fun DaysGraphOverviewScreen(
                                 .fillMaxWidth()
                                 .height(200.dp),
                             onSelection = { _, points ->
-                                pointsList.value = points
+                                pointsList.addAll(points)
                             }
                         )
 
@@ -247,11 +283,11 @@ fun DaysGraphOverviewScreen(
                         }
                     }
 
-                    if (pointsList.value.isNotEmpty()) {
+                    if (pointsList.isNotEmpty()) {
 
-                        val effect = days[pointsList.value[0].x.toInt()-1].second
+                        val effect = days[pointsList[0].x.toInt()-1].second
                         val day = allDays.filter {
-                            it.id == days[pointsList.value[0].x.toInt()-1].first
+                            it.id == days[pointsList[0].x.toInt()-1].first
                         }.first()
                         EffectsListItem(
                             effectRate = effect.rate,
