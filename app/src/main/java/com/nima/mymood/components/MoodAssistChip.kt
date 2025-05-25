@@ -17,10 +17,13 @@ fun MoodAssistChip(
     modifier: Modifier = Modifier,
     month: Int,
     day: Int,
-    year: Int
+    year: Int,
+    onClick: (() -> Unit) = {}
     ) {
     AssistChip(
-        onClick = {},
+        onClick = {
+            onClick()
+        },
         label = {
             Text(
                 text = "${Calculate.calculateMonthName(month)} " +

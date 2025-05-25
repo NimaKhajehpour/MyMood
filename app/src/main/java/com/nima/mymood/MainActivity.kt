@@ -1,19 +1,27 @@
 package com.nima.mymood
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.core.view.WindowCompat
 import androidx.navigation.compose.rememberNavController
 import com.nima.mymood.navigation.MoodNavigation
 import com.nima.mymood.screens.AboutScreen
@@ -29,7 +37,6 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-
             val context = LocalContext.current
             val scope = rememberCoroutineScope()
             val themeDataStore = ThemeDataStore(context)
@@ -38,10 +45,17 @@ class MainActivity : ComponentActivity() {
                 runBlocking {
                     delay(1500)
                 }
+//                enableEdgeToEdge()
                 MyMoodTheme(
                     darkTheme = theme,
                     dynamicColor = false
                 ) {
+                    val view = LocalView.current
+                    val window = (view.context as Activity).window
+
+                    SideEffect {
+                        WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !theme // negate darkTheme
+                    }
                     // A surface container using the 'background' color from the theme
                     Surface(
                         modifier = Modifier.fillMaxSize(),
